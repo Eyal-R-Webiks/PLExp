@@ -1,0 +1,403 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>סקר il-hym index</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg0: #fff8ef;
+      --bg1: #ffe3bf;
+      --ink: #172026;
+      --muted: #5b6670;
+      --card: rgba(255,255,255,0.84);
+      --line: rgba(23,32,38,0.12);
+      --accent: #db4b3f;
+      --accent2: #1f8a70;
+      --shadow: 0 16px 45px rgba(23,32,38,0.13);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: 'Space Grotesk', sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(1200px 700px at 8% 8%, #ffd097 0%, transparent 65%),
+        radial-gradient(850px 550px at 95% 10%, #ffc7a8 0%, transparent 70%),
+        linear-gradient(160deg, var(--bg0), var(--bg1));
+      min-height: 100vh;
+      direction: rtl;
+    }
+
+    .container {
+      width: min(1200px, 94vw);
+      margin: 28px auto 40px;
+    }
+
+    .hero {
+      padding: 26px;
+      border-radius: 20px;
+      background: var(--card);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(4px);
+      animation: rise .6s ease;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: clamp(1.6rem, 4vw, 2.5rem);
+      letter-spacing: -0.02em;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 1rem;
+      margin-bottom: 10px;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .chip {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.82rem;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 5px 10px;
+      color: #334;
+    }
+
+    .cards {
+      margin-top: 14px;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .card {
+      padding: 14px;
+      border-radius: 14px;
+      background: #fff;
+      border: 1px solid var(--line);
+    }
+
+    .card-title {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .card-value {
+      font-size: clamp(1rem, 2.6vw, 1.7rem);
+      font-weight: 700;
+      line-height: 1.1;
+    }
+
+    .card-sub {
+      margin-top: 4px;
+      color: #49545d;
+      font-size: 0.83rem;
+    }
+
+    .grid {
+      margin-top: 14px;
+      display: grid;
+      grid-template-columns: 1.15fr 1fr;
+      gap: 14px;
+    }
+
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      padding: 16px;
+      animation: rise .75s ease;
+    }
+
+    h2 {
+      margin: 0 0 10px;
+      font-size: 1.16rem;
+      letter-spacing: -0.01em;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+    }
+
+    th, td {
+      text-align: right;
+      padding: 8px 6px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: middle;
+    }
+
+    th {
+      color: #2f3a44;
+      font-size: 0.82rem;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+    }
+
+    .genre { font-weight: 600; }
+
+    .bar-wrap {
+      width: 100%;
+      height: 9px;
+      background: #f0e8df;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .bar {
+      height: 100%;
+      background: linear-gradient(90deg, #ef6a58, #db4b3f);
+      border-radius: 999px;
+    }
+
+    .bar.alt {
+      background: linear-gradient(90deg, #34a78c, #1f8a70);
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .list-scroll {
+      max-height: 300px;
+      overflow: auto;
+      margin: 0;
+      padding: 0 18px 0 0;
+    }
+
+    .list-scroll li {
+      margin-bottom: 4px;
+      line-height: 1.35;
+    }
+
+    .mono {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.86rem;
+    }
+
+    .tree {
+      margin: 0;
+      padding-right: 20px;
+      line-height: 1.45;
+      list-style: none;
+    }
+
+    .tree > li {
+      margin-bottom: 10px;
+      position: relative;
+    }
+
+    .tree ul {
+      margin: 6px 0 0;
+      padding-right: 20px;
+      list-style: none;
+      border-right: 2px solid rgba(23,32,38,0.15);
+    }
+
+    .tree ul li {
+      margin-bottom: 3px;
+      position: relative;
+      padding-right: 10px;
+    }
+
+    .tree ul li::before {
+      content: "";
+      position: absolute;
+      right: -2px;
+      top: 0.8em;
+      width: 10px;
+      border-top: 2px solid rgba(23,32,38,0.15);
+    }
+
+    .ltr-panel {
+      direction: ltr;
+      text-align: left;
+    }
+
+    .ltr-panel h2 {
+      text-align: left;
+    }
+
+    .foot {
+      margin-top: 14px;
+      color: #4f5b66;
+      font-size: 0.88rem;
+      padding: 0 4px;
+    }
+
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 980px) {
+      .cards { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .grid { grid-template-columns: 1fr; }
+      .split { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 560px) {
+      .cards { grid-template-columns: 1fr; }
+      th:nth-child(4), td:nth-child(4) { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <section class="hero">
+      <h1>סקר il-hym לפי index.csv</h1>
+      <div class="subtitle">התפלגות ז'אנרים ותתי-ז'אנרים ואורכי טקסט</div>
+      <div class="chips">
+        <span class="chip">מספר קבצים: 115,834</span>
+        <span class="chip">תאריך: 2026-04-20</span>
+        <span class="chip">מקור: il-hym/index.csv</span>
+        <span class="chip">השפעת genre על אורך (eta2): 0.1348</span>
+      </div>
+      <div class="cards">
+        
+    <div class="card">
+      <div class="card-title">מינימום</div>
+      <div class="card-value">4</div>
+      <div class="card-sub">תווים</div>
+    </div>
+    
+        
+    <div class="card">
+      <div class="card-title">חציון</div>
+      <div class="card-value">2,120</div>
+      <div class="card-sub">תווים</div>
+    </div>
+    
+        
+    <div class="card">
+      <div class="card-title">ממוצע</div>
+      <div class="card-value">3,492.72</div>
+      <div class="card-sub">תווים</div>
+    </div>
+    
+        
+    <div class="card">
+      <div class="card-title">מקסימום</div>
+      <div class="card-value">514,611</div>
+      <div class="card-sub">תווים</div>
+    </div>
+    
+        
+    <div class="card">
+      <div class="card-title">P10</div>
+      <div class="card-value">923</div>
+      <div class="card-sub">תווים</div>
+    </div>
+    
+        
+    <div class="card">
+      <div class="card-title">P90</div>
+      <div class="card-value">6,871</div>
+      <div class="card-sub">תווים</div>
+    </div>
+    
+      </div>
+    </section>
+
+    <section class="panel ltr-panel" style="margin-top:14px;">
+      <h2>Genre/Subgenre Tree</h2>
+      <ul class="tree"><li><strong>animals</strong><ul><li><span class="mono">adoption</span>: 50 articles, len range 1,120-8,574</li><li><em>&lt;no subgenre&gt;</em>: 275 articles, len range 310-13,255</li></ul></li><li><strong>auto</strong><ul><li><em>&lt;no subgenre&gt;</em>: 87 articles, len range 145-23,596</li><li><span class="mono">local-auto</span>: 73 articles, len range 564-3,235</li><li><span class="mono">roadtests</span>: 46 articles, len range 1,776-8,932</li><li><span class="mono">twowheels</span>: 35 articles, len range 459-6,983</li><li><span class="mono">world</span>: 7 articles, len range 1,082-2,936</li></ul></li><li><strong>business</strong><ul><li><em>&lt;no subgenre&gt;</em>: 358 articles, len range 387-21,297</li><li><span class="mono">consumers</span>: 4,352 articles, len range 103-41,267</li><li><span class="mono">real-estate</span>: 988 articles, len range 130-34,601</li></ul></li><li><strong>careers</strong><ul><li><em>&lt;no subgenre&gt;</em>: 1 articles, len range 1,375-1,375</li></ul></li><li><strong>celebrities</strong><ul><li><em>&lt;no subgenre&gt;</em>: 34 articles, len range 692-14,237</li><li><span class="mono">local-celebrities</span>: 2,420 articles, len range 114-24,846</li><li><span class="mono">world-news-celebrities</span>: 358 articles, len range 159-8,591</li></ul></li><li><strong>culture</strong><ul><li><span class="mono">art</span>: 91 articles, len range 636-7,381</li><li><span class="mono">books</span>: 229 articles, len range 585-37,935</li><li><em>&lt;no subgenre&gt;</em>: 9 articles, len range 556-3,079</li><li><span class="mono">films</span>: 726 articles, len range 360-17,806</li><li><span class="mono">language</span>: 68 articles, len range 155-34,037</li><li><span class="mono">music</span>: 1,553 articles, len range 108-56,124</li><li><span class="mono">radio</span>: 48 articles, len range 285-4,583</li><li><span class="mono">stage</span>: 419 articles, len range 387-27,075</li><li><span class="mono">standup</span>: 1 articles, len range 4,584-4,584</li><li><span class="mono">tv</span>: 2,285 articles, len range 108-98,232</li></ul></li><li><strong>food</strong><ul><li><span class="mono">breads-and-pastries</span>: 15 articles, len range 1,283-5,082</li><li><span class="mono">cakes-and-cookies</span>: 23 articles, len range 1,282-6,349</li><li><span class="mono">desserts</span>: 75 articles, len range 679-5,893</li><li><span class="mono">drinks</span>: 77 articles, len range 711-32,840</li><li><span class="mono">fish</span>: 3 articles, len range 1,519-3,861</li><li><em>&lt;no subgenre&gt;</em>: 10 articles, len range 1,208-20,981</li><li><span class="mono">food-news</span>: 910 articles, len range 163-20,265</li><li><span class="mono">food-tours</span>: 1 articles, len range 7,899-7,899</li><li><span class="mono">holiday-recipes</span>: 51 articles, len range 1,362-16,102</li><li><span class="mono">meat-and-poultry</span>: 24 articles, len range 1,047-8,922</li><li><span class="mono">pasta</span>: 18 articles, len range 1,424-8,236</li><li><span class="mono">recipes</span>: 87 articles, len range 401-9,264</li><li><span class="mono">recipes-for-kids</span>: 12 articles, len range 839-4,811</li><li><span class="mono">restaurant-reviews</span>: 38 articles, len range 639-10,237</li><li><span class="mono">salads</span>: 2 articles, len range 2,188-3,268</li><li><span class="mono">vegan-and-vegeterian</span>: 16 articles, len range 345-8,603</li></ul></li><li><strong>general</strong><ul><li><em>&lt;no subgenre&gt;</em>: 4,517 articles, len range 13-73,742</li></ul></li><li><strong>health</strong><ul><li><em>&lt;no subgenre&gt;</em>: 3,132 articles, len range 174-95,764</li></ul></li><li><strong>horoscopes</strong><ul><li><em>&lt;no subgenre&gt;</em>: 54 articles, len range 1,710-3,586</li></ul></li><li><strong>judaism</strong><ul><li><em>&lt;no subgenre&gt;</em>: 95 articles, len range 166-10,090</li><li><span class="mono">judaism-news</span>: 3,054 articles, len range 13-129,174</li><li><span class="mono">synagogue</span>: 195 articles, len range 195-32,182</li><li><span class="mono">world-news-judaism</span>: 932 articles, len range 51-16,455</li></ul></li><li><strong>lifestyle</strong><ul><li><span class="mono">beauty</span>: 175 articles, len range 366-13,038</li><li><span class="mono">design</span>: 140 articles, len range 16-8,874</li><li><span class="mono">diets-and-nutrition</span>: 13 articles, len range 1,339-9,896</li><li><span class="mono">family-and-parenting</span>: 204 articles, len range 382-8,242</li><li><span class="mono">fashion</span>: 944 articles, len range 93-11,739</li><li><em>&lt;no subgenre&gt;</em>: 359 articles, len range 185-81,151</li><li><span class="mono">relationship</span>: 198 articles, len range 190-19,154</li><li><span class="mono">shopping</span>: 97 articles, len range 298-9,022</li><li><span class="mono">well-being-and-fitness</span>: 99 articles, len range 143-9,273</li></ul></li><li><strong>magazine</strong><ul><li><span class="mono">hashavua</span>: 5,258 articles, len range 61-31,226</li><li><em>&lt;no subgenre&gt;</em>: 18 articles, len range 1,714-33,882</li><li><span class="mono">shishabat</span>: 3,961 articles, len range 187-514,611</li><li><span class="mono">special</span>: 294 articles, len range 39-101,559</li></ul></li><li><strong>marketing</strong><ul><li><em>&lt;no subgenre&gt;</em>: 7 articles, len range 1,239-5,014</li></ul></li><li><strong>military-life</strong><ul><li><em>&lt;no subgenre&gt;</em>: 68 articles, len range 377-9,507</li><li><span class="mono">military-tech</span>: 138 articles, len range 227-11,896</li><li><span class="mono">world-news-military-life</span>: 957 articles, len range 284-24,230</li></ul></li><li><strong>mumlazim</strong><ul><li><em>&lt;no subgenre&gt;</em>: 618 articles, len range 8-10,468</li></ul></li><li><strong>news</strong><ul><li><span class="mono">crime</span>: 1,133 articles, len range 377-6,795</li><li><span class="mono">defense</span>: 392 articles, len range 408-27,514</li><li><span class="mono">education</span>: 981 articles, len range 106-31,805</li><li><span class="mono">environment</span>: 994 articles, len range 443-13,806</li><li><span class="mono">europe</span>: 668 articles, len range 412-19,533</li><li><span class="mono">geopolitics</span>: 2,364 articles, len range 109-27,216</li><li><span class="mono">law</span>: 3,984 articles, len range 17-39,292</li><li><span class="mono">local</span>: 6,319 articles, len range 10-46,037</li><li><span class="mono">middle-east</span>: 1,843 articles, len range 350-35,395</li><li><em>&lt;no subgenre&gt;</em>: 14,606 articles, len range 18-56,408</li><li><span class="mono">other</span>: 140 articles, len range 423-13,416</li><li><span class="mono">politics</span>: 498 articles, len range 458-11,960</li><li><span class="mono">transportation</span>: 84 articles, len range 820-13,968</li><li><span class="mono">usa</span>: 859 articles, len range 541-12,514</li><li><span class="mono">world-news</span>: 8,081 articles, len range 52-18,507</li></ul></li><li><strong>opinions</strong><ul><li><em>&lt;no subgenre&gt;</em>: 417 articles, len range 673-12,448</li></ul></li><li><strong>podcasts</strong><ul><li><span class="mono">fifteen</span>: 1,699 articles, len range 4-122,015</li><li><em>&lt;no subgenre&gt;</em>: 25 articles, len range 212-3,017</li></ul></li><li><strong>sport</strong><ul><li><span class="mono">%d7%a9%d7%97%d7%99%d7%99%d7%94</span>: 4 articles, len range 976-1,455</li><li><span class="mono">athletics</span>: 24 articles, len range 422-9,408</li><li><span class="mono">israeli-basketball</span>: 3,418 articles, len range 200-16,651</li><li><span class="mono">israeli-soccer</span>: 6,223 articles, len range 141-15,915</li><li><span class="mono">other-sports</span>: 1,361 articles, len range 183-16,580</li><li><em>&lt;no subgenre&gt;</em>: 2,386 articles, len range 75-53,546</li><li><span class="mono">tennis</span>: 158 articles, len range 444-4,756</li><li><span class="mono">world-basketball</span>: 1,615 articles, len range 152-7,519</li><li><span class="mono">world-soccer</span>: 3,906 articles, len range 39-9,041</li></ul></li><li><strong>tech</strong><ul><li><span class="mono">apps</span>: 33 articles, len range 495-5,292</li><li><span class="mono">gadgets</span>: 26 articles, len range 760-6,194</li><li><span class="mono">gaming</span>: 73 articles, len range 158-10,041</li><li><span class="mono">reviews</span>: 56 articles, len range 150-8,776</li><li><span class="mono">security-and-privacy</span>: 3 articles, len range 1,158-4,909</li><li><span class="mono">space</span>: 80 articles, len range 508-8,046</li><li><em>&lt;no subgenre&gt;</em>: 561 articles, len range 253-13,512</li><li><span class="mono">tech-news</span>: 4,789 articles, len range 12-217,275</li></ul></li><li><strong>travel</strong><ul><li><span class="mono">tours</span>: 347 articles, len range 246-59,646</li><li><em>&lt;no subgenre&gt;</em>: 1,111 articles, len range 39-27,461</li></ul></li><li><strong>viral</strong><ul><li><em>&lt;no subgenre&gt;</em>: 1,007 articles, len range 97-38,149</li></ul></li><li><strong>weathern</strong><ul><li><em>&lt;no subgenre&gt;</em>: 22 articles, len range 566-4,968</li></ul></li><li><strong>you-may-find-interesting</strong><ul><li><span class="mono">content</span>: 101 articles, len range 506-6,743</li><li><span class="mono">experts</span>: 1,726 articles, len range 36-13,808</li><li><span class="mono">professionals</span>: 48 articles, len range 1,718-5,885</li><li><em>&lt;no subgenre&gt;</em>: 267 articles, len range 189-12,411</li></ul></li></ul>
+    </section>
+
+    <section class="panel" style="margin-top:14px;">
+        <h2>טווחי אורך</h2>
+        <table>
+          <thead>
+            <tr><th>טווח</th><th>קבצים</th><th>חלק יחסי</th><th>עמודה חזותית</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="genre">0-999</td>
+              <td>14,308</td>
+              <td>12.35%</td>
+              <td><div class="bar-wrap"><div class="bar alt" style="width:33.04%"></div></div></td>
+            </tr><tr>
+              <td class="genre">1,000-1,999</td>
+              <td>39,731</td>
+              <td>34.30%</td>
+              <td><div class="bar-wrap"><div class="bar alt" style="width:91.74%"></div></div></td>
+            </tr><tr>
+              <td class="genre">2,000-4,999</td>
+              <td>43,309</td>
+              <td>37.39%</td>
+              <td><div class="bar-wrap"><div class="bar alt" style="width:100.00%"></div></div></td>
+            </tr><tr>
+              <td class="genre">5,000-9,999</td>
+              <td>12,067</td>
+              <td>10.42%</td>
+              <td><div class="bar-wrap"><div class="bar alt" style="width:27.86%"></div></div></td>
+            </tr><tr>
+              <td class="genre">10,000-19,999</td>
+              <td>4,876</td>
+              <td>4.21%</td>
+              <td><div class="bar-wrap"><div class="bar alt" style="width:11.26%"></div></div></td>
+            </tr><tr>
+              <td class="genre">20,000-59,999</td>
+              <td>1,375</td>
+              <td>1.19%</td>
+              <td><div class="bar-wrap"><div class="bar alt" style="width:3.17%"></div></div></td>
+            </tr><tr>
+              <td class="genre">60,000-99,999</td>
+              <td>146</td>
+              <td>0.13%</td>
+              <td><div class="bar-wrap"><div class="bar alt" style="width:1.00%"></div></div></td>
+            </tr><tr>
+              <td class="genre">100,000-199,999</td>
+              <td>18</td>
+              <td>0.02%</td>
+              <td><div class="bar-wrap"><div class="bar alt" style="width:1.00%"></div></div></td>
+            </tr><tr>
+              <td class="genre">200,000+</td>
+              <td>4</td>
+              <td>0.00%</td>
+              <td><div class="bar-wrap"><div class="bar alt" style="width:1.00%"></div></div></td>
+            </tr>
+          </tbody>
+        </table>
+    </section>
+
+    <section class="panel" style="margin-top:14px;">
+      <h2>דוגמאות קבצים</h2>
+      <div class="split">
+        <div>
+          <div class="mono" style="margin-bottom:8px;">50 הקבצים הקצרים ביותר</div>
+          <ul class="list-scroll"><li><span class="mono">podcasts-14150144.txt (podcasts) - 4</span></li><li><span class="mono">mumlazim-790266.txt (mumlazim) - 8</span></li><li><span class="mono">news-10675015.txt (news) - 10</span></li><li><span class="mono">mumlazim-5571371.txt (mumlazim) - 12</span></li><li><span class="mono">tech-13776538.txt (tech) - 12</span></li><li><span class="mono">general-9725829.txt (general) - 13</span></li><li><span class="mono">judaism-14150095.txt (judaism) - 13</span></li><li><span class="mono">lifestyle-9359820.txt (lifestyle) - 16</span></li><li><span class="mono">news-14149532.txt (news) - 17</span></li><li><span class="mono">general-7231687.txt (general) - 18</span></li><li><span class="mono">news-13441210.txt (news) - 18</span></li><li><span class="mono">news-14150098.txt (news) - 18</span></li><li><span class="mono">general-13286602.txt (general) - 19</span></li><li><span class="mono">general-13286405.txt (general) - 22</span></li><li><span class="mono">general-9726165.txt (general) - 26</span></li><li><span class="mono">podcasts-13554277.txt (podcasts) - 26</span></li><li><span class="mono">general-14062997.txt (general) - 27</span></li><li><span class="mono">tech-10080176.txt (tech) - 28</span></li><li><span class="mono">news-14068818.txt (news) - 29</span></li><li><span class="mono">general-8845292.txt (general) - 30</span></li><li><span class="mono">news-14160314.txt (news) - 33</span></li><li><span class="mono">news-13136069.txt (news) - 34</span></li><li><span class="mono">podcasts-13292356.txt (podcasts) - 34</span></li><li><span class="mono">podcasts-14142456.txt (podcasts) - 34</span></li><li><span class="mono">mumlazim-7566112.txt (mumlazim) - 35</span></li><li><span class="mono">news-13794641.txt (news) - 36</span></li><li><span class="mono">you-may-find-interesting-13207049.txt (you-may-find-interesting) - 36</span></li><li><span class="mono">magazine-8611331.txt (magazine) - 39</span></li><li><span class="mono">sport-10467864.txt (sport) - 39</span></li><li><span class="mono">travel-7916511.txt (travel) - 39</span></li><li><span class="mono">podcasts-13431458.txt (podcasts) - 40</span></li><li><span class="mono">podcasts-13275282.txt (podcasts) - 41</span></li><li><span class="mono">podcasts-13307885.txt (podcasts) - 41</span></li><li><span class="mono">sport-10414433.txt (sport) - 41</span></li><li><span class="mono">judaism-13270376.txt (judaism) - 44</span></li><li><span class="mono">podcasts-13170801.txt (podcasts) - 45</span></li><li><span class="mono">podcasts-13193019.txt (podcasts) - 45</span></li><li><span class="mono">news-13843588.txt (news) - 46</span></li><li><span class="mono">podcasts-13166120.txt (podcasts) - 46</span></li><li><span class="mono">sport-10417261.txt (sport) - 48</span></li><li><span class="mono">news-13303284.txt (news) - 49</span></li><li><span class="mono">sport-10377186.txt (sport) - 50</span></li><li><span class="mono">judaism-13274893.txt (judaism) - 51</span></li><li><span class="mono">judaism-14150085.txt (judaism) - 51</span></li><li><span class="mono">news-13456008.txt (news) - 52</span></li><li><span class="mono">news-13132194.txt (news) - 53</span></li><li><span class="mono">news-13132195.txt (news) - 53</span></li><li><span class="mono">news-13132196.txt (news) - 53</span></li><li><span class="mono">news-13132197.txt (news) - 53</span></li><li><span class="mono">sport-10412284.txt (sport) - 54</span></li></ul>
+        </div>
+        <div>
+          <div class="mono" style="margin-bottom:8px;">50 הקבצים הארוכים ביותר</div>
+          <ul class="list-scroll"><li><span class="mono">magazine-14168084.txt (magazine) - 514,611</span></li><li><span class="mono">tech-13242779.txt (tech) - 217,275</span></li><li><span class="mono">magazine-14153302.txt (magazine) - 208,237</span></li><li><span class="mono">magazine-14158124.txt (magazine) - 200,945</span></li><li><span class="mono">magazine-14109554.txt (magazine) - 183,843</span></li><li><span class="mono">magazine-14164485.txt (magazine) - 161,041</span></li><li><span class="mono">magazine-14167464.txt (magazine) - 151,786</span></li><li><span class="mono">magazine-14108574.txt (magazine) - 129,321</span></li><li><span class="mono">judaism-14173835.txt (judaism) - 129,174</span></li><li><span class="mono">podcasts-14172803.txt (podcasts) - 122,015</span></li><li><span class="mono">judaism-14151853.txt (judaism) - 116,985</span></li><li><span class="mono">magazine-14165377.txt (magazine) - 109,748</span></li><li><span class="mono">judaism-14113444.txt (judaism) - 107,823</span></li><li><span class="mono">judaism-14208929.txt (judaism) - 105,592</span></li><li><span class="mono">magazine-14152785.txt (magazine) - 104,065</span></li><li><span class="mono">magazine-14162331.txt (magazine) - 103,739</span></li><li><span class="mono">judaism-14183519.txt (judaism) - 103,542</span></li><li><span class="mono">magazine-14173969.txt (magazine) - 103,253</span></li><li><span class="mono">podcasts-14109544.txt (podcasts) - 102,910</span></li><li><span class="mono">magazine-14141943.txt (magazine) - 102,863</span></li><li><span class="mono">magazine-14154425.txt (magazine) - 101,595</span></li><li><span class="mono">magazine-14183252.txt (magazine) - 101,559</span></li><li><span class="mono">magazine-14153846.txt (magazine) - 99,993</span></li><li><span class="mono">magazine-14169412.txt (magazine) - 99,558</span></li><li><span class="mono">culture-11413158.txt (culture) - 98,232</span></li><li><span class="mono">magazine-14111585.txt (magazine) - 97,660</span></li><li><span class="mono">magazine-14176227.txt (magazine) - 97,480</span></li><li><span class="mono">magazine-14165049.txt (magazine) - 96,393</span></li><li><span class="mono">magazine-14152796.txt (magazine) - 95,794</span></li><li><span class="mono">health-8336315.txt (health) - 95,764</span></li><li><span class="mono">magazine-14150816.txt (magazine) - 95,734</span></li><li><span class="mono">magazine-14164434.txt (magazine) - 94,799</span></li><li><span class="mono">magazine-14158134.txt (magazine) - 94,516</span></li><li><span class="mono">podcasts-14182611.txt (podcasts) - 94,326</span></li><li><span class="mono">magazine-14171993.txt (magazine) - 93,646</span></li><li><span class="mono">magazine-14159204.txt (magazine) - 93,345</span></li><li><span class="mono">podcasts-14175937.txt (podcasts) - 92,277</span></li><li><span class="mono">magazine-14152185.txt (magazine) - 91,682</span></li><li><span class="mono">podcasts-14164197.txt (podcasts) - 90,266</span></li><li><span class="mono">magazine-14161950.txt (magazine) - 90,246</span></li><li><span class="mono">magazine-14151950.txt (magazine) - 89,409</span></li><li><span class="mono">podcasts-14177826.txt (podcasts) - 89,242</span></li><li><span class="mono">magazine-14192213.txt (magazine) - 88,386</span></li><li><span class="mono">podcasts-14165103.txt (podcasts) - 87,144</span></li><li><span class="mono">magazine-14111581.txt (magazine) - 86,623</span></li><li><span class="mono">magazine-14115321.txt (magazine) - 86,442</span></li><li><span class="mono">podcasts-14167936.txt (podcasts) - 86,164</span></li><li><span class="mono">magazine-14165688.txt (magazine) - 86,142</span></li><li><span class="mono">magazine-14166838.txt (magazine) - 86,129</span></li><li><span class="mono">magazine-14152553.txt (magazine) - 85,511</span></li></ul>
+        </div>
+      </div>
+    </section>
+
+    <div class="foot">
+      דוח סטטי שנבנה מתוך il-hym/index.csv
+    </div>
+  </div>
+</body>
+</html>
