@@ -1,15 +1,16 @@
-# Abstractive QA — Hebrew QA Pipeline
+# NLP_Abstractive_QA
 
-Research project for building a Hebrew abstractive question-answering dataset.
-The pipeline takes raw Hebrew text from multiple corpora, generates questions using LLMs, and evaluates them with RAG-backed automated scoring.
+Project for building a Hebrew abstractive QA dataset (1,000 question–answer pairs) for the MAFAT/Dicta evaluation leaderboard.
+The pipeline generates information-seeking Hebrew questions from three native-Hebrew corpora using Gemini 3, produces abstractive answers, and supports human annotation of quality dimensions via Label Studio.
 
 ## Repository Structure
 
 ```
 Abstractive_QA/
-├── pilot/                  # Completed pilot (scripts, runs, evaluation)
+├── PRD.md                  # Product Requirements Document
+├── pilot/                  # Completed pilot (scripts, runs, evaluation outputs)
 ├── data_prep/              # Corpus data and preparation scripts (large files not versioned)
-└── info_sheets/            # Reference paper chunks for RAG-backed methodology Q&A
+└── resources/              # Reference docs, paper PDFs, and RAG info-sheet chunks
 ```
 
 See each folder's `README.md` for details:
