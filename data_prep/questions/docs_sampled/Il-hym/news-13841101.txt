@@ -1,0 +1,22 @@
+# source = Israel_Hayom
+# genre = news
+# url = https://www.israelhayom.co.il/news/article/13841101/
+# doc_id = news-13841101
+# title = 'An orchestrated campaign to politically damage the PM'
+# publication_date = 2014-04-09T11:21:15
+
+'An orchestrated campaign to politically damage the PM'
+
+Netanyahu associates come out against a recent lawsuit against the Prime Minister's Office, which claimed damages for "harmful" and "abusive" environment at the Prime Minister's Residence • Plaintiff: Shouting, insults were routine.
+
+Confidants of Prime Minister Benjamin Netanyahu and his family on Tuesday criticized a former Prime Minister's Residence employee who is demanding financial compensation from the Prime Minister's Office over work-related damages, saying the man was a part of a larger smear campaign seeking to damage Netanyahu politically.
+
+"This is an orchestrated and organized campaign of rounding up embittered former employees from the Prime Minister's Residence. They are promised 15 minutes of fame just to extort conditions from the Prime Minister's Office, while conducting a vicious smear campaign against the prime minister's wife with the intention of politically damaging the prime minister," a confidant of the Netanyahu family said in response to a Channel 2 news story on the lawsuit.
+
+The claimant, former Prime Minister's Residence employee Guy Eliyahu, filed the lawsuit at the National Labor Court in Jerusalem, demanding 650,000 shekels ($187,000) in compensation.
+
+The statement of claim said Eliyahu had been working at the Prime Minister's Residence "under harmful work conditions, which were inconceivably abusive."
+
+"Cleaning activities accompanied by shouting, abuse and insults were commonplace, and struck fear into all employees," the lawsuit said. "Often small incidents precipitated angry outbursts that could end in exceptional circumstances, such as throwing misplaced dishes on the floor. Handling food exacerbated the anxiety-ridden tension because [Eliyahu] was asked to ensure that residents eat sterile food -- in other words, food prepared without human contact."
+
+The statement also claimed that the prime minister's wife, Sara Netanyahu, demanded that "maintenance personnel be available to her at all times of the day and night, always wishing her good night when leaving at the end of a shift."

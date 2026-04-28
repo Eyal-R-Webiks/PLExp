@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>סוגי הידע בטקסונומיה של בלום</title>
+  <style>
+    :root {
+      --bg: #f6f4ee;
+      --paper: #fffdf8;
+      --ink: #182022;
+      --muted: #5f6b6e;
+      --line: #d6d0c0;
+      --accent: #1f6b5d;
+      --accent-soft: #dff2ea;
+      --gold: #c68a1a;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Avenir Next", "Heebo", "Segoe UI", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 10% 10%, #efe8d6 0 20%, transparent 21%),
+        radial-gradient(circle at 90% 0%, #dfece6 0 18%, transparent 19%),
+        var(--bg);
+      line-height: 1.6;
+    }
+
+    .wrap {
+      width: min(1080px, 94vw);
+      margin: 28px auto 48px;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #1f6b5d 0%, #24504d 70%);
+      color: #f8f8f4;
+      border-radius: 18px;
+      padding: 32px 28px;
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      right: -80px;
+      top: -80px;
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: clamp(1.6rem, 2.8vw, 2.3rem);
+      letter-spacing: 0.3px;
+      max-width: 800px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .subtitle {
+      margin: 8px 0 0;
+      color: #e7f4ef;
+      font-size: 1.05rem;
+      max-width: 800px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .card {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      margin-bottom: 16px;
+    }
+
+    h2 {
+      margin: 0 0 14px;
+      font-size: 1.28rem;
+      color: #173f37;
+      border-bottom: 2px solid #dff2ea;
+      padding-bottom: 8px;
+    }
+
+    h3 {
+      margin: 16px 0 10px;
+      font-size: 1.1rem;
+      color: #1f6b5d;
+      background: var(--accent-soft);
+      padding: 8px 12px;
+      border-radius: 8px;
+    }
+
+    p {
+      margin: 0 0 10px;
+      font-size: 0.98rem;
+      line-height: 1.65;
+    }
+
+    p:last-child {
+      margin-bottom: 0;
+    }
+
+    ul, ol {
+      margin: 10px 0 0;
+      padding-right: 24px;
+    }
+
+    li {
+      margin: 8px 0;
+      font-size: 0.98rem;
+      line-height: 1.65;
+    }
+
+    .example-block {
+      background: #f9faf8;
+      border-right: 4px solid var(--accent);
+      border-radius: 6px;
+      padding: 12px 14px;
+      margin: 10px 0;
+      font-size: 0.96rem;
+      line-height: 1.6;
+    }
+
+    .example-label {
+      font-weight: 700;
+      color: #1f6b5d;
+      margin-bottom: 4px;
+      display: block;
+    }
+
+    .note {
+      padding: 12px 14px;
+      border-radius: 10px;
+      border-right: 5px solid var(--gold);
+      background: #fff8ea;
+      margin-top: 12px;
+      font-size: 0.96rem;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    @media (max-width: 900px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+      .hero {
+        padding: 24px 20px;
+      }
+      h2 {
+        font-size: 1.15rem;
+      }
+      h3 {
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="hero">
+      <h1>סוגי הידע בטקסונומיה של בלום</h1>
+      <p class="subtitle">תרגום ועדכון ישראלי: שימוש בדוגמאות מטקסטים בעברית</p>
+    </section>
+
+    <section class="card">
+      <h2>למה סוגי הידע חשובים</h2>
+      <p>
+        מעבר לרמת החשיבה (זכירה, הבנה, יישום וכו'), טקסונומיית בלום מסווגת את סוג הידע שמתבדקים. משימה יכולה להיות ברמת "זכירה" עם ידע עובדתי, או ברמת "זכירה" עם ידע תהליכי – ודברים אלו עשויים לדרוש יכולות שונות.
+      </p>
+      <p>
+        עקרון זה חיוני בהערכת מודלים: רמת הקושי שלהם אינה תלויה רק בסוג החשיבה הנדרש, אלא גם בסוג הידע שמעורב במשימה.
+      </p>
+    </section>
+
+    <section class="card">
+      <h2>ידע עובדתי (Factual Knowledge)</h2>
+      <p>
+        <strong>תיאור:</strong> עובדות עצמאיות, הגדרות, מונחים, תאריכים ספציפיים, שמות וקטגוריות.
+      </p>
+      <p>
+        <strong>זיהוי:</strong> המשימה שואלת "מה זה?" או "מתי זה קרה?" או "זכור את הפריט הזה."
+      </p>
+
+      <h3>דוגמאות מהטקסטים בעברית:</h3>
+      <div class="example-block">
+        <span class="example-label">דוגמה 1 (קורות חיים):</span>
+        "מהו המונח הלועזי לקורות חיים שמקורו בצרפתית?" → תשובה: "Résumé"
+      </div>
+      <div class="example-block">
+        <span class="example-label">דוגמה 2 (ועדת כספים):</span>
+        "כמה שקלים הנחה ביקש משה גפני לתת בחורף?" → תשובה: "40 שקלים"
+      </div>
+
+      <p>
+        <strong>הערה למודלים:</strong> מודלים בדרך כלל מצליחים בבדיקות של ידע עובדתי אם העובדה הופיעה בנתוני ההדרכה. אם העובדה נדירה או ספציפית, הביצוע יורד משמעותית.
+      </p>
+    </section>
+
+    <section class="card">
+      <h2>ידע קונספטואלי (Conceptual Knowledge)</h2>
+      <p>
+        <strong>תיאור:</strong> קטגוריות, עקרונות, יחסים, הכללות, שרשראות סיבה-תוצאה וגם מערכות.
+      </p>
+      <p>
+        <strong>זיהוי:</strong> המשימה שואלת על יחסים, על מערכות או על מסגרות רחבות יותר. לא עובדה בודדת אלא רשת של רעיונות קשורים.
+      </p>
+
+      <h3>דוגמאות מהטקסטים בעברית:</h3>
+      <div class="example-block">
+        <span class="example-label">דוגמה 1 (קורות חיים):</span>
+        "מה ההבדל בין השימוש בקורות חיים למטרות תעסוקה לבין השימוש בהם להצגה בפני ציבור?"
+        <br/>
+        זו דורשת הבנה של היחסים בין שתי השימושים השונים ודיון בנקודות ההבדל המושגיות ביניהם.
+      </div>
+      <div class="example-block">
+        <span class="example-label">דוגמה 2 (פרלמנט איראני):</span>
+        "מה הקשר בין החבלה במכליות הסעודיות לבין המתיחות בין ארה"ב לאיראן?"
+        <br/>
+        זו דורשת הבנה של קשר סיבה-תוצאה ודינמיקה בין אירועים שונים.
+      </div>
+
+      <p>
+        <strong>הערה למודלים:</strong> מודלים לעתים קרובות זוכים בבדיקות ידע קונספטואלי שנראות טוב על פי כללים בסיסיים, אך הם עלולים להחמיץ דקויות חשובות בבחירת הדוגמה.
+      </p>
+    </section>
+
+    <section class="card">
+      <h2>ידע תהליכי (Procedural Knowledge)</h2>
+      <p>
+        <strong>תיאור:</strong> טכניקות, שיטות, אלגוריתמים, תהליכים שלב-אחר-שלב, ידע "כיצד לעשות".
+      </p>
+      <p>
+        <strong>זיהוי:</strong> המשימה שואלת "איך עושים את זה?" או "מה הם השלבים?" דורש סידור וההיגיון המקשר בין שלבים.
+      </p>
+
+      <h3>דוגמאות מהטקסטים בעברית:</h3>
+      <div class="example-block">
+        <span class="example-label">דוגמה 1 (ועדת כספים):</span>
+        "מהי הבעיה המשפטית שמעלה גפני ומה הטיעון הנגדי של ויסבלום?"
+        <br/>
+        זו דורשת מיפוי תהליכי של טיעונים – זיהוי הטענה, הבנת המבנה שלה, והשוואה לנימוק הנגדי.
+      </div>
+      <div class="example-block">
+        <span class="example-label">דוגמה 2 (ניתוח מערכת יחסים):</span>
+        הסקת מסקנות על יחסי כוחות בין גופים שונים דורשת הבנה של תהליך דינמי לאורך זמן.
+      </div>
+
+      <p>
+        <strong>הערה למודלים:</strong> טקסטים הם בדרך כלל קשים יותר עבור מודלים מאשר ידע קונספטואלי. שמירה על סדר היגיוני וצדקת כל שלב היא משימה דורשת קוגניטיביות.
+      </p>
+    </section>
+
+    <section class="card">
+      <h2>ידע מטא-קוגניטיבי (Metacognitive Knowledge)</h2>
+      <p>
+        <strong>תיאור:</strong> מודעות לידע ולחשיבה שלך: מה אתה יודע טוב, איפה יש לך פערים, כמה בטוח אתה, למה בחרת אסטרטגיה מסוימת, מה היית עושה אחרת בפעם הבאה.
+      </p>
+      <p>
+        <strong>זיהוי:</strong> המשימה שואלת אותך להשתקף על הדרך שלך בחשיבה, לא רק לענות על השאלה. זה "מטא" – על הקוגניציה עצמה.
+      </p>
+
+      <h3>דוגמאות מהטקסטים בעברית:</h3>
+      <div class="example-block">
+        <span class="example-label">דוגמה מהטקסטים:</span>
+        זיהוי גבולות הידע - "מה היה שיעור ההסכמה (IAA) שנדרש בדיון הקודם על תקנות הדרכונים?"
+        <br/>
+        התשובה: "המידע אינו מופיע בטקסט."
+        <br/>
+        זו משימה מטא-קוגניטיבית – מודל צריך להבין את גבולות הידע שלו.
+      </div>
+
+      <p>
+        <strong>הערה חשובה:</strong> בדיקות של ידע מטא-קוגניטיבי כמעט לא מופיעות בבנצ'מארקים הנוכחיים. מודלים גם נראים לא מוכנים לכך – הם לא אומרים טבעית "אני לא בטוח" או "זה חוץ לתחום הידע שלי."
+      </p>
+    </section>
+
+    <section class="card">
+      <h2>התנאים להבדלת סוגי הידע</h2>
+      
+      <h3>כיצד בדיקות בשטח מציגות אתגרים</h3>
+      <p>
+        כאשר המחברים של המחקר הקורי (Huber &amp; Niklaus) בדקו הסכמה בין בדיקות שונות (בני אדם, GPT-4, Claude וכו'), הם מצאו:
+      </p>
+      <ul>
+        <li>
+          <strong>הסכמה על רמות קוגניטיביות הייתה טובה יחסית:</strong> בני אדם ומודלים הסכימו על רמות בלום (כמו "זכירה" נגד "ניתוח") בחיזוי טוב.
+        </li>
+        <li>
+          <strong>הסכמה על סוגי הידע הייתה הרבה יותר חלשה:</strong> כאשר היה צריך להחליט אם משימה היא "עובדתית" לעומת "קונספטואלית" או "תהליכית" לעומת "קונספטואלית", הסכמה יוצאת מנקודה של כ-30%. זה חלש.
+        </li>
+      </ul>
+      <div class="note">
+        <strong>משמעות:</strong> סוגי הידע או באמת דו-משמעיים (משימה אחת יכולה להיות מתויגת בדרכים שונות בצדק), או שמודלים לא למדו לבצע הבחנות אלו בצורה אמינה. בשני המקרים, זו אזהרה – אל תסמכו יותר מדי על סיווגי סוגי ידע בלא בדיקה זהירה.
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>מדוע זה משנה ב-LLM Evaluation</h2>
+      <p>
+        הבנת סוגי הידע חשובה לשלוש סיבות:
+      </p>
+      <ol>
+        <li>
+          <strong>זה מסביר וריאציות בביצוע בתוך אותה רמת קוגניטיביות.</strong>
+          משימות "זכירה" דורות בעובדות אינן בדיוק קשות כמו משימות "זכירה" דורות בתהליך. מודלים בדרך כלל טובים בראשון וגרוע יותר בשני.
+        </li>
+        <li>
+          <strong>זה עוזר בתכנון בנצ'מארקים מעוזנים.</strong>
+          אם אתה רוצה בדיקה שמגדירה יכולות באופן רחב, אתה צריך סוגי ידע שונים בכל רמה. לא ניתן לבחור רק בעובדות או רק בתהליכים.
+        </li>
+        <li>
+          <strong>זה משפר אבחון של נקודות חוזק וחולש של מודל.</strong>
+          אם מודל מתבצע נמוך בבדיקות תהליכיות אבל גבוה בבדיקות עובדתיות, זו תובנה אלו שיוסיף לך כיוון שיפור ספציפי.
+        </li>
+      </ol>
+    </section>
+
+    <p style="text-align: center; margin-top: 32px; font-size: 0.92rem; color: var(--muted);">
+      תרגום וההתאמה: על בסיס "Deep Dive: The Knowledge Dimensions and Why They're Tricky" מ-llms_bloom_summary_for_humans.html<br/>
+      דוגמאות: מתוך Level_definitions_examples.md
+    </p>
+  </main>
+</body>
+</html>

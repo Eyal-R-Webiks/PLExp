@@ -1,3 +1,0 @@
-Evaluate Hebrew question from text.
-Return CSV only with fields:
-complexity_level(0-3),question_quality(1-5),relevance(1-5),rationale(hebrew short),identified_issues(or none)

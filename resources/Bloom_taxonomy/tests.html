@@ -1,0 +1,419 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>שאלות לדוגמה - רמות 0-3</title>
+  <style>
+    :root {
+      --bg: #f6f4ee;
+      --paper: #fffdf8;
+      --ink: #182022;
+      --muted: #5f6b6e;
+      --line: #d6d0c0;
+      --accent: #1f6b5d;
+      --accent-soft: #dff2ea;
+      --level1: #e3f2fd;
+      --level2: #f3e5f5;
+      --level3: #fff3e0;
+      --level0: #fce4ec;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Heebo", "Segoe UI", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 10% 10%, #efe8d6 0 20%, transparent 21%),
+        radial-gradient(circle at 90% 0%, #dfece6 0 18%, transparent 19%),
+        var(--bg);
+      line-height: 1.6;
+    }
+
+    .wrap {
+      width: min(1080px, 94vw);
+      margin: 28px auto 48px;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #1f6b5d 0%, #24504d 70%);
+      color: #f8f8f4;
+      border-radius: 18px;
+      padding: 26px 24px;
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero:after {
+      content: "";
+      position: absolute;
+      left: -80px;
+      top: -80px;
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.6rem, 2.5vw, 2.2rem);
+      letter-spacing: 0.2px;
+      max-width: 760px;
+      font-weight: 700;
+    }
+
+    .subtitle {
+      margin: 12px 0 0;
+      color: #e7f4ef;
+      font-size: 1rem;
+      max-width: 760px;
+    }
+
+    .card {
+      margin-top: 14px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 16px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    h2 {
+      margin: 24px 0 12px;
+      font-size: 1.4rem;
+      color: #173f37;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--line);
+    }
+
+    h3 {
+      margin: 16px 0 8px;
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+
+    p { margin: 0 0 10px; }
+
+    .muted { color: var(--muted); }
+
+    .level-block {
+      margin: 16px 0;
+      border-radius: 12px;
+      padding: 14px;
+      border-right: 5px solid #ccc;
+    }
+
+    .level-block.level0 {
+      background: #fce4ec;
+      border-right-color: #c2185b;
+    }
+
+    .level-block.level1 {
+      background: #e3f2fd;
+      border-right-color: #1976d2;
+    }
+
+    .level-block.level2 {
+      background: #f3e5f5;
+      border-right-color: #7b1fa2;
+    }
+
+    .level-block.level3 {
+      background: #fff3e0;
+      border-right-color: #f57c00;
+    }
+
+    .field {
+      margin: 10px 0;
+    }
+
+    .field-label {
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--ink);
+      display: inline;
+    }
+
+    .field-value {
+      display: inline;
+      line-height: 1.6;
+    }
+
+    .explanation {
+      margin-top: 8px;
+      padding: 8px 12px;
+      background: rgba(0, 0, 0, 0.03);
+      border-right: 3px solid rgba(0, 0, 0, 0.1);
+      border-radius: 6px;
+      font-size: 0.93rem;
+    }
+
+    .text-section {
+      page-break-inside: avoid;
+    }
+
+    .section-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #1f6b5d;
+      margin: 28px 0 14px;
+      padding-bottom: 8px;
+      border-bottom: 3px solid var(--accent-soft);
+    }
+
+    .divider {
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--line), transparent);
+      margin: 20px 0;
+    }
+
+    ul, ol {
+      margin: 8px 0;
+      padding-right: 20px;
+    }
+
+    li { margin: 6px 0; }
+
+    @media (max-width: 900px) {
+      .wrap { padding: 10px; }
+      h2 { font-size: 1.2rem; }
+      h3 { font-size: 1rem; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="hero">
+      <h1>שאלות לדוגמה - רמות 0-3</h1>
+      <p class="subtitle">
+        בהתבסס על מסמך הדרישות ועל ההצעה המתוקנת לרמה 3, להלן שאלות לדוגמה מכל רמה עבור כל אחד משלושת הטקסטים
+      </p>
+    </section>
+
+    <section class="card">
+      <div class="section-title">טקסט 1: קורות חיים (ויקיפדיה)</div>
+
+      <div class="text-section">
+        <h3>רמה 1 - שליפה</h3>
+        <div class="level-block level1">
+          <div class="field">
+            <span class="field-label">שאלה:</span>
+            <span class="field-value">"מהו המונח הלועזי לקורות חיים שמקורו בצרפתית?"</span>
+          </div>
+          <div class="field">
+            <span class="field-label">תשובה:</span>
+            <span class="field-value">Résumé</span>
+          </div>
+          <div class="explanation">
+            <strong>הסבר:</strong> התשובה נמצאת במפורש בפסקה 1, במשפט הראשון בלבד. זוהי שליפה ישירה של מידע.
+          </div>
+        </div>
+      </div>
+
+      <div class="text-section">
+        <h3>רמה 2 - אינטגרציה והסקה</h3>
+        <div class="level-block level2">
+          <div class="field">
+            <span class="field-label">שאלה:</span>
+            <span class="field-value">"מה ההבדל בין השימוש בקורות חיים למטרות תעסוקה לבין השימוש בהם להצגה בפני ציבור?"</span>
+          </div>
+          <div class="field">
+            <span class="field-label">תשובה:</span>
+            <span class="field-value">בקורות חיים תעסוקתיים מציגים השכלה וכישורים מקצועיים למעסיקים פוטנציאליים (פסקה 2), בעוד שבקורות חיים ציבוריים (כמו של פוליטיקאים או סופרים) מציגים ציוני דרך חשובים בחיים בצורה מתומצתת המדגישה פרטים רלוונטיים למטרת ההצגה (פסקה 5).</span>
+          </div>
+          <div class="explanation">
+            <strong>הסבר:</strong> נדרש לחבר מידע מפסקה 1 (הגדרה כללית), פסקה 2 ("קורות חיים תעסוקתיים") ופסקה 5 ("קורות חיים בפני ציבור").
+          </div>
+        </div>
+      </div>
+
+      <div class="text-section">
+        <h3>רמה 3 - חשיבה ביקורתית והסקת מסקנות</h3>
+        <div class="level-block level3">
+          <div class="field">
+            <span class="field-label">שאלה:</span>
+            <span class="field-value">"על סמך המגמות המתוארות בטקסט לגבי קורות חיים באינטרנט וקורות חיים מעוצבים, מה ניתן להסיק על כיוון ההתפתחות העתידי של תחום קורות החיים?"</span>
+          </div>
+          <div class="field">
+            <span class="field-label">תשובה:</span>
+            <span class="field-value">ניתן להסיק שקורות חיים הופכים יותר דינמיים ואינטראקטיביים, עם דגש גובר על מיתוג אישי ובידול. השילוב של טכנולוגיה (פסקה 6 - אינטרנט, דואר אלקטרוני, רשתות חברתיות) עם עיצוב ייחודי (פסקה 7 - תמונות, וידאו, קישורים) מצביע על מעבר מפורמט סטטי לפורמט רב-ממדי. עם זאת, הטקסט מציין שיש מעסיקים הנרתעים משינויים אלה (פסקה 7), מה שמרמז על מתח בין חדשנות לשמרנות בתחום.</span>
+          </div>
+          <div class="explanation">
+            <strong>הסבר:</strong> השאלה דורשת ניתוח מגמות מפסקאות 6-7 והסקת מסקנות לגבי העתיד על בסיס המידע בטקסט בלבד, ללא הוספת ידע חיצוני.
+          </div>
+        </div>
+      </div>
+
+      <div class="text-section">
+        <h3>רמה 0 - ללא מענה</h3>
+        <div class="level-block level0">
+          <div class="field">
+            <span class="field-label">שאלה:</span>
+            <span class="field-value">"מה הם הכישורים הטכניים הנדרשים ליצירת קורות חיים דיגיטליים אינטראקטיביים?"</span>
+          </div>
+          <div class="field">
+            <span class="field-label">תשובה:</span>
+            <span class="field-value">המידע אינו מופיע בטקסט.</span>
+          </div>
+          <div class="explanation">
+            <strong>הסבר:</strong> הטקסט מזכיר קיום של קורות חיים באינטרנט (פסקה 6) ושילוב אלמנטים כמו וידאו וקישורים (פסקה 7), אך אינו מפרט כלל אילו כישורים טכניים נדרשים ליצירתם.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <section class="card">
+      <div class="section-title">טקסט 2: חבר פרלמנט איראני (ישראל היום)</div>
+
+      <div class="text-section">
+        <h3>רמה 1 - שליפה</h3>
+        <div class="level-block level1">
+          <div class="field">
+            <span class="field-label">שאלה:</span>
+            <span class="field-value">"מה אמר חבר הפרלמנט האיראני עלי מוחטארי לגבי ישראל?"</span>
+          </div>
+          <div class="field">
+            <span class="field-label">תשובה:</span>
+            <span class="field-value">"ארה"ב לא מוכנה למלחמה, במיוחד שישראל נמצאת בטווח הפגיעה שלנו"</span>
+          </div>
+          <div class="explanation">
+            <strong>הסבר:</strong> ציטוט ישיר המופיע בפסקה 2, במשפט אחד בטקסט.
+          </div>
+        </div>
+      </div>
+
+      <div class="text-section">
+        <h3>רמה 2 - אינטגרציה והסקה</h3>
+        <div class="level-block level2">
+          <div class="field">
+            <span class="field-label">שאלה:</span>
+            <span class="field-value">"מה הקשר בין החבלה במכליות הסעודיות לבין המתיחות בין ארה"ב לאיראן?"</span>
+          </div>
+          <div class="field">
+            <span class="field-label">תשובה:</span>
+            <span class="field-value">החבלה במכליות התרחשה על רקע תגבור הכוחות האמריקניים במפרץ הפרסי בשל המתיחות עם איראן (פסקה 2). החשד נופל על מיליציות שיעיות הנאמנות לאיראן (פסקה 3), והאירוע מתפרש כחלק מההתגרות ההדדית באזור, כאשר איראן זועמת על הסנקציות האמריקניות (פסקה 4).</span>
+          </div>
+          <div class="explanation">
+            <strong>הסבר:</strong> נדרש לחבר מידע מפסקאות 2, 3 ו-4 על המתיחות, החבלה, והחשודים.
+          </div>
+        </div>
+      </div>
+
+      <div class="text-section">
+        <h3>רמה 3 - חשיבה ביקורתית והסקת מסקנות</h3>
+        <div class="level-block level3">
+          <div class="field">
+            <span class="field-label">שאלה:</span>
+            <span class="field-value">"על סמך הציטוטים של הבכירים האיראניים בטקסט, מה ניתן להסיק על האסטרטגיה התקשורתית של איראן במשבר?"</span>
+          </div>
+          <div class="field">
+            <span class="field-label">תשובה:</span>
+            <span class="field-value">האסטרטגיה האיראנית משלבת מסרים סותרים: מצד אחד איומים ישירים (פסקה 2 - "ישראל בטווח", פסקה 5 - "נכה בראשם"), ומצד שני טענות שארה"ב מנהלת "מלחמה פסיכולוגית" בלבד (פסקה 1, 2, 5). זה מרמז על ניסיון להרתיע מבלי להיראות כמתגרה, תוך הצגת עצמם כחזקים (פסקה 5 - "איומים הפכו להזדמנויות") אך לא כיוזמי עימות.</span>
+          </div>
+          <div class="explanation">
+            <strong>הסבר:</strong> נדרש ניתוח דפוס ההתבטאויות מפסקאות 1, 2 ו-5 והסקת מסקנות על האסטרטגיה מאחוריהן.
+          </div>
+        </div>
+      </div>
+
+      <div class="text-section">
+        <h3>רמה 0 - ללא מענה</h3>
+        <div class="level-block level0">
+          <div class="field">
+            <span class="field-label">שאלה:</span>
+            <span class="field-value">"כמה כלי שיט איראניים נפרסו במפרץ הפרסי בתגובה לנוכחות האמריקנית?"</span>
+          </div>
+          <div class="field">
+            <span class="field-label">תשובה:</span>
+            <span class="field-value">המידע אינו מופיע בטקסט.</span>
+          </div>
+          <div class="explanation">
+            <strong>הסבר:</strong> הטקסט מזכיר נוכחות אמריקנית (פסקאות 4-5) אך אינו מספק מידע על פריסה איראנית נגדית.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <section class="card">
+      <div class="section-title">טקסט 3: פרוטוקול ועדת הכספים (כנסת)</div>
+
+      <div class="text-section">
+        <h3>רמה 1 - שליפה</h3>
+        <div class="level-block level1">
+          <div class="field">
+            <span class="field-label">שאלה:</span>
+            <span class="field-value">"כמה שקלים הנחה ביקש משה גפני לתת בחורף?"</span>
+          </div>
+          <div class="field">
+            <span class="field-label">תשובה:</span>
+            <span class="field-value">40 שקלים</span>
+          </div>
+          <div class="explanation">
+            <strong>הסבר:</strong> המידע מופיע במפורש בפסקה 1 ובפסקה 22, במשפט אחד בדברי גפני.
+          </div>
+        </div>
+      </div>
+
+      <div class="text-section">
+        <h3>רמה 2 - אינטגרציה והסקה</h3>
+        <div class="level-block level2">
+          <div class="field">
+            <span class="field-label">שאלה:</span>
+            <span class="field-value">"מהי הבעיה המשפטית שמעלה משה גפני לגבי מי שלא נותן טביעות אצבעות, ומה הטיעון הנגדי של עירית ויסבלום?"</span>
+          </div>
+          <div class="field">
+            <span class="field-label">תשובה:</span>
+            <span class="field-value">גפני טוען שאי אפשר לקנוס אדם שלא נותן טביעות אצבעות כי החוק לא מחייב זאת, ולחייב תשלום כפול זה לא צודק (פסקאות 1, 5, 13). ויסבלום טוענת שאין בעיה משפטית כי התשלום הוא עבור שירות ההנפקה שעולה אותו דבר (פסקאות 4, 14, 19), וגם שהמאגר הביומטרי לא יכול לזהות ביעילות לאחר 5 שנים ללא טביעות (פסקאות 6, 8, 10).</span>
+          </div>
+          <div class="explanation">
+            <strong>הסבר:</strong> נדרש לאסוף טיעונים משני הצדדים המפוזרים בפסקאות 1, 4-6, 8, 10, 13-14, 19.
+          </div>
+        </div>
+      </div>
+
+      <div class="text-section">
+        <h3>רמה 3 - חשיבה ביקורתית והסקת מסקנות</h3>
+        <div class="level-block level3">
+          <div class="field">
+            <span class="field-label">שאלה:</span>
+            <span class="field-value">"על סמך הדינמיקה של הדיון, מה ניתן להסיק על יחסי הכוחות בין ועדת הכספים לבין נציגי הממשלה בנושא קביעת אגרות?"</span>
+          </div>
+          <div class="field">
+            <span class="field-label">תשובה:</span>
+            <span class="field-value">הוועדה מחזיקה בכוח משמעותי - היא יכולה לעכב אישור תקנות ולכפות שינויים. גפני משתמש באיומים (פסקה 24 - "אפשר לסגור את הישיבה", פסקה 26 - "אם אתה אומר כן אני מצביע"), מה שמאלץ את נציגי הממשלה להתפשר. עם זאת, גם לממשלה יש מגבלות (חוקיות ותקציביות) שהוועדה מכבדת בסופו של דבר (פסקאות 70, 79, 81 - ההסכמה להגביל לשנתיים). מתגלה איזון עדין בין סמכות פורמלית לכוח פוליטי.</span>
+          </div>
+          <div class="explanation">
+            <strong>הסבר:</strong> נדרש ניתוח של דפוסי הדיון לאורך הפסקאות (במיוחד 24, 26, 70, 79, 81, 171) והסקת מסקנות על מאזן הכוחות הבלתי מפורש.
+          </div>
+        </div>
+      </div>
+
+      <div class="text-section">
+        <h3>רמה 0 - ללא מענה</h3>
+        <div class="level-block level0">
+          <div class="field">
+            <span class="field-label">שאלה:</span>
+            <span class="field-value">"מה היה שיעור ההסכמה (IAA) שנדרש בדיון הקודם על תקנות הדרכונים?"</span>
+          </div>
+          <div class="field">
+            <span class="field-label">תשובה:</span>
+            <span class="field-value">המידע אינו מופיע בטקסט.</span>
+          </div>
+          <div class="explanation">
+            <strong>הסבר:</strong> הטקסט מתייחס לדיונים קודמים (פסקאות 23, 145) אך לא מזכיר נתונים סטטיסטיים כמו IAA.
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</body>
+</html>

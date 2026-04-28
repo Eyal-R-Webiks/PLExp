@@ -1,0 +1,833 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>LLMs + Bloom Taxonomy — Summary For Humans</title>
+  <style>
+    :root {
+      --bg: #f6f4ee;
+      --paper: #fffdf8;
+      --ink: #182022;
+      --muted: #5f6b6e;
+      --line: #d6d0c0;
+      --accent: #1f6b5d;
+      --accent-soft: #dff2ea;
+      --alert: #9b2c2c;
+      --gold: #c68a1a;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Avenir Next", "Heebo", "Segoe UI", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 10% 10%, #efe8d6 0 20%, transparent 21%),
+        radial-gradient(circle at 90% 0%, #dfece6 0 18%, transparent 19%),
+        var(--bg);
+      line-height: 1.5;
+    }
+
+    .wrap {
+      width: min(1080px, 94vw);
+      margin: 28px auto 48px;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #1f6b5d 0%, #24504d 70%);
+      color: #f8f8f4;
+      border-radius: 18px;
+      padding: 26px 24px;
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero:after {
+      content: "";
+      position: absolute;
+      right: -80px;
+      top: -80px;
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.5rem, 2.5vw, 2.2rem);
+      letter-spacing: 0.2px;
+      max-width: 760px;
+    }
+
+    .subtitle {
+      margin: 10px 0 0;
+      color: #e7f4ef;
+      font-size: 1rem;
+      max-width: 760px;
+    }
+
+    .subtitle a {
+      color: inherit;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    .subtitle a:hover {
+      text-decoration-thickness: 2px;
+    }
+
+    .summary-credit {
+      margin: 8px 0 0;
+      color: #d8eee7;
+      font-size: 0.95rem;
+    }
+
+    .meta {
+      margin-top: 14px;
+      font-size: 0.92rem;
+      color: #d8eee7;
+    }
+
+    .card {
+      margin-top: 14px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 16px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    h2 {
+      margin: 0 0 10px;
+      font-size: 1.2rem;
+      color: #173f37;
+    }
+
+    h3 {
+      margin: 0 0 8px;
+      font-size: 1rem;
+    }
+
+    p { margin: 0 0 10px; }
+
+    .muted { color: var(--muted); }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .three {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .pill {
+      display: inline-block;
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 999px;
+      border: 1px solid #b7ddd1;
+      background: var(--accent-soft);
+      color: #1f6b5d;
+      margin-bottom: 6px;
+    }
+
+    ul, ol {
+      margin: 8px 0 0;
+      padding-left: 20px;
+    }
+
+    li { margin: 6px 0; }
+
+    .kpi {
+      border: 1px solid #cde2d9;
+      border-radius: 12px;
+      background: #f4fbf8;
+      padding: 12px;
+    }
+
+    .kpi .label {
+      font-size: 0.84rem;
+      color: #37655a;
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+    }
+
+    .kpi .value {
+      margin-top: 4px;
+      font-weight: 800;
+      font-size: 1.45rem;
+      color: #19463d;
+    }
+
+    .coverage {
+      margin-top: 8px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .bar-row {
+      display: grid;
+      grid-template-columns: 140px 1fr 70px;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.92rem;
+    }
+
+    .track {
+      height: 11px;
+      border-radius: 999px;
+      background: #ebf1ef;
+      border: 1px solid #d3e3de;
+      overflow: hidden;
+    }
+
+    .fill {
+      height: 100%;
+      background: linear-gradient(90deg, #2d8b78, #57a692);
+    }
+
+    .missing {
+      color: var(--alert);
+      font-weight: 700;
+    }
+
+    .note {
+      padding: 10px 12px;
+      border-radius: 10px;
+      border-left: 5px solid var(--gold);
+      background: #fff8ea;
+      margin-top: 8px;
+    }
+
+    .footer {
+      margin-top: 16px;
+      font-size: 0.86rem;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    @media (max-width: 900px) {
+      .grid,
+      .three {
+        grid-template-columns: 1fr;
+      }
+
+      .bar-row {
+        grid-template-columns: 1fr;
+        gap: 4px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="hero">
+      <h1>LLMs meet Bloom’s Taxonomy:<br />A Cognitive View on Large Language Model Evaluations</h1>
+      <p class="subtitle">
+        Thomas Huber and Christina Niklaus. 2025. <a href="https://aclanthology.org/2025.coling-main.350/" target="_blank" rel="noopener noreferrer">LLMs meet Bloom’s Taxonomy: A Cognitive View on Large Language Model Evaluations</a>. In <em>Proceedings of the 31st International Conference on Computational Linguistics</em>, pages 5211-5246, Abu Dhabi, UAE. Association for Computational Linguistics.
+      </p>
+        <p class="summary-credit">(Summary by Claude 4 Opus)</p>
+    </section>
+
+    <section class="card">
+      <span class="pill">One-Minute TL;DR</span>
+      <p>
+        The paper argues that current LLM benchmark reporting is incomplete. Most popular evaluations over-test
+        lower and mid-level reasoning and under-test higher-order cognition.
+      </p>
+      <p>
+        Bottom line: many models look strong because they are tested where they are strong. We need broader benchmark
+        coverage mapped to Bloom’s taxonomy for a fair capability picture.
+      </p>
+    </section>
+
+    <section class="grid three">
+      <article class="kpi">
+        <div class="label">Tasks Analyzed</div>
+        <div class="value">43</div>
+        <div class="muted">Commonly used benchmark tasks/subtasks</div>
+      </article>
+      <article class="kpi">
+        <div class="label">Main Gap</div>
+        <div class="value">Evaluate + Create</div>
+        <div class="muted">Not covered in the selected benchmark set</div>
+      </article>
+      <article class="kpi">
+        <div class="label">Overall Finding</div>
+        <div class="value">Lower > Higher</div>
+        <div class="muted">Models generally perform better at lower Bloom levels</div>
+      </article>
+    </section>
+
+    <section class="card">
+      <h2>Understanding Bloom's Taxonomy: The Full Picture</h2>
+      
+      <p>
+        Bloom's Taxonomy is a framework originally developed in education to classify cognitive complexity—essentially, 
+        the different levels of thinking required to master a subject. The paper applies this framework to LLM benchmark tasks 
+        to answer a critical question: <strong>Are we really measuring what we claim to measure about model capabilities?</strong>
+      </p>
+
+      <p>
+        The taxonomy has two dimensions that work together:
+      </p>
+
+      <h3 style="margin-top: 16px;">Dimension 1: The Cognitive Process (The "Levels" Everyone Talks About)</h3>
+      
+      <p>
+        This dimension arranges thinking tasks in a hierarchy from simplest to most complex. Each level builds on the previous one, 
+        creating a pyramid of cognitive demand. Here's how the paper describes them:
+      </p>
+
+      <ul>
+        <li>
+          <strong>Remember (Lower-Order):</strong> Can you recall or recognize information as presented? 
+          This is pure retrieval—the model needs to find and reproduce what was explicitly stated. 
+          Example: "What year was X founded?" where the answer appears verbatim in the text.
+        </li>
+        <li>
+          <strong>Understand (Lower-Order):</strong> Can you grasp the meaning and explain ideas in your own words? 
+          The model must comprehend what was said and communicate understanding without just copying. 
+          Example: "Why did the author argue for X?" requires interpreting intent, not just finding a sentence.
+        </li>
+        <li>
+          <strong>Apply (Mid-Order):</strong> Can you use knowledge in a new but concrete situation? 
+          The model must take a rule, concept, or procedure and use it to solve a problem or complete a task. 
+          Example: "Using the algorithm described in the paper, what would the output be if input was Y?"
+        </li>
+        <li>
+          <strong>Analyze (Mid-Order/Higher-Order boundary):</strong> Can you break information into parts and explain relationships? 
+          The model must identify components, see how they connect, and possibly spot patterns or contradictions. 
+          Example: "Compare the two approaches described. What are their key differences and why do those differences matter?"
+        </li>
+        <li>
+          <strong>Evaluate (Higher-Order):</strong> Can you make judgments based on criteria? 
+          The model must assess the quality, validity, or effectiveness of something using explicit or implicit standards. 
+          Example: "Which solution is better and why?" or "Is the evidence sufficient to support the claim?"
+        </li>
+        <li>
+          <strong>Create (Higher-Order):</strong> Can you put elements together to form something new? 
+          The model must synthesize, design, or generate original work (not just recombine existing pieces). 
+          Example: "Design a new approach to the problem that addresses the limitations mentioned in the paper."
+        </li>
+      </ul>
+
+      <p style="margin-top: 12px;">
+        <strong>Key insight from the paper:</strong> Current LLM benchmarks cluster heavily in the Remember → Understand → Apply → Analyze range. 
+        Almost nothing tests Evaluate or Create. This creates an illusion: models look capable because they're measured where they shine, 
+        not where they might struggle.
+      </p>
+
+      <h3 style="margin-top: 16px;">Dimension 2: The Knowledge Type (Less Well Known But Important)</h3>
+      
+      <p>
+        Beyond the level of thinking, Bloom also classifies the <em>type</em> of knowledge being processed. 
+        This is the second dimension. Understanding this matters because a task can be "Remember" level with conceptual knowledge, 
+        or "Remember" level with procedural knowledge—and these might require different model capabilities.
+      </p>
+
+      <ul>
+        <li>
+          <strong>Factual:</strong> Discrete facts, definitions, terminology. 
+          "What is the capital of France?" or "Define photosynthesis." 
+          These are knowledge items that stand alone. Models tend to do well here if facts appeared in training.
+        </li>
+        <li>
+          <strong>Conceptual:</strong> Categories, principles, generalizations, relationships. 
+          "How do democracy and authoritarianism differ?" or "Explain the relationship between supply and demand." 
+          These require understanding how ideas connect and organize. Trickier than pure facts.
+        </li>
+        <li>
+          <strong>Procedural:</strong> How to do something—steps, techniques, methods, algorithms. 
+          "How would you debug a Python function?" or "What are the steps to solve a quadratic equation?" 
+          Models must recall a sequence and its logic. This is surprisingly hard for many models when the procedure is complex.
+        </li>
+        <li>
+          <strong>Metacognitive:</strong> Awareness of your own knowledge and thinking. 
+          "What do you know well about this topic and what gaps do you have?" or "How confident are you in this answer and why?" 
+          This is almost never tested in benchmarks, and models are generally not trained for it.
+        </li>
+      </ul>
+
+      <p style="margin-top: 12px;">
+        <strong>Key insight from the paper:</strong> Knowledge-dimension labeling was harder to agree on than cognitive-process levels. 
+        The authors found that LLMs and humans disagreed more on "What type of knowledge is this?" than on "What level of thinking does this require?" 
+        This suggests that the knowledge dimension is either genuinely ambiguous or that models haven't learned to distinguish knowledge types well.
+      </p>
+    </section>
+
+    <section class="card">
+      <h2>How To Recognize What Level A Task Belongs To: Practical Recognition Guide</h2>
+
+      <p>
+        The paper emphasizes that mapping tasks to Bloom levels isn't always obvious. Many tasks sit on a boundary 
+        or require judgment. Here's what the authors learned about the key decision points:
+      </p>
+
+      <h3 style="margin-top: 14px;">Remember vs. Understand</h3>
+      <ul>
+        <li>
+          <strong>Remember:</strong> The answer appears in the source material, often verbatim or nearly identical. 
+          You could find it with a search or pattern match. Example: "I have 3 apples and 2 oranges. How many items do I have?" 
+          (from the paper—the model just needs to count what's there).
+        </li>
+        <li>
+          <strong>Understand:</strong> The answer requires paraphrasing, explaining, or restating in different words. 
+          The information is present but not in the exact form needed. Example: "Explain why the author chose this approach" 
+          (you must interpret, not just quote).
+        </li>
+        <li>
+          <strong>Gray zone:</strong> Reading comprehension tasks that ask "What does the passage say about X?" 
+          sit here. If the passage almost says it directly, it's Remember-leaning. If you must infer or reword, it's Understand-leaning.
+        </li>
+      </ul>
+
+      <h3 style="margin-top: 14px;">Understand vs. Apply</h3>
+      <ul>
+        <li>
+          <strong>Understand:</strong> The model explains what something means or how it works in a general sense. 
+          Example: "What is machine learning?" (explain the concept).
+        </li>
+        <li>
+          <strong>Apply:</strong> The model uses a rule, procedure, or concept to solve a new concrete problem. 
+          Example: "Apply the algorithm described in Section 3 to this data." (execute it on a novel instance).
+        </li>
+        <li>
+          <strong>Gray zone:</strong> Math and coding problems often blur the line. Simple substitution (plug numbers in) 
+          is Apply. Complex multi-step problem-solving is also Apply. But if the problem just asks "explain the method," 
+          that's Understand.
+        </li>
+      </ul>
+
+      <h3 style="margin-top: 14px;">Apply vs. Analyze</h3>
+      <ul>
+        <li>
+          <strong>Apply:</strong> Use a known procedure or rule to solve a straightforward problem. 
+          Example: "Solve 2x + 5 = 15 using the method from the textbook."
+        </li>
+        <li>
+          <strong>Analyze:</strong> Break something into parts, identify components, find patterns, or explain relationships. 
+          Example: "Compare two algorithms: Which is more efficient for large datasets and why?" 
+          (requires decomposition and comparison, not just execution).
+        </li>
+        <li>
+          <strong>Gray zone:</strong> Complex procedural tasks (like debugging or designing a system) can be Analyze-level 
+          if they require diagnosing what's wrong or explaining trade-offs. The key: does solving it require breaking things down 
+          and reasoning about parts?
+        </li>
+      </ul>
+
+      <h3 style="margin-top: 14px;">Analyze vs. Evaluate</h3>
+      <ul>
+        <li>
+          <strong>Analyze:</strong> Identify components and relationships: "What are the key differences between approach A and B?"
+        </li>
+        <li>
+          <strong>Evaluate:</strong> Make a judgment about quality, validity, or preference based on criteria: 
+          "Which approach is better and why?" or "Is the evidence sufficient?" (Judge, assess, critique).
+        </li>
+        <li>
+          <strong>Gray zone:</strong> Many tasks ask students to compare but stop short of judging. 
+          "Compare two viewpoints" is Analyze. "Which viewpoint is more credible?" adds Evaluate.
+        </li>
+      </ul>
+
+      <h3 style="margin-top: 14px;">Evaluate vs. Create</h3>
+      <ul>
+        <li>
+          <strong>Evaluate:</strong> Assess existing work: "Is this solution good? Does this argument work? 
+          Is this code correct?" (Judge based on criteria).
+        </li>
+        <li>
+          <strong>Create:</strong> Generate something new: "Design your own solution." "Write a different approach." 
+          "Propose an improvement." (Synthesize or generate, not just assess existing ideas).
+        </li>
+        <li>
+          <strong>Gray zone:</strong> The paper notes this is hard to score reliably because "creating" is open-ended. 
+          You can rank solutions against each other (Evaluate) but measuring whether a generated solution is truly novel and effective 
+          requires subjective judgment.
+        </li>
+      </ul>
+
+      <h3 style="margin-top: 14px;">Examples from the Paper</h3>
+      <p>
+        The paper gives a concrete example: the BIG-Bench task "object_counting" asks "I have a fish, a bear, and a frog. How many animals do I have?" 
+        This is pure Remember: count what's given. But within BIG-Bench, "snarks" asks "Which statement is sarcastic?" 
+        This is Analyze: recognize sarcasm requires breaking down language and inferring intent. 
+        Same benchmark, wildly different cognitive levels—which is exactly why aggregating benchmark scores hides the truth.
+      </p>
+    </section>
+
+    <section class="card">
+      <h2>Coverage Snapshot From The Paper</h2>
+      <p style="margin-bottom: 12px;">
+        Of the 43 benchmark tasks analyzed, here's how they distribute across Bloom's levels:
+      </p>
+      <div class="coverage">
+        <div class="bar-row">
+          <strong>Remember</strong>
+          <div class="track"><div class="fill" style="width: 2.3%"></div></div>
+          <span>1 task</span>
+        </div>
+        <div class="bar-row">
+          <strong>Understand</strong>
+          <div class="track"><div class="fill" style="width: 25.6%"></div></div>
+          <span>11 tasks</span>
+        </div>
+        <div class="bar-row">
+          <strong>Apply</strong>
+          <div class="track"><div class="fill" style="width: 34.9%"></div></div>
+          <span>15 tasks</span>
+        </div>
+        <div class="bar-row">
+          <strong>Analyze</strong>
+          <div class="track"><div class="fill" style="width: 37.2%"></div></div>
+          <span>16 tasks</span>
+        </div>
+        <div class="bar-row">
+          <strong class="missing">Evaluate</strong>
+          <div class="track"><div class="fill" style="width: 0%"></div></div>
+          <span class="missing">0</span>
+        </div>
+        <div class="bar-row">
+          <strong class="missing">Create</strong>
+          <div class="track"><div class="fill" style="width: 0%"></div></div>
+          <span class="missing">0</span>
+        </div>
+      </div>
+      <div class="note">
+        <strong>The Problem:</strong> Roughly 85% of tasks cluster in Remember through Analyze. 
+        Remember is almost absent (1 task), so the bulk sits in Understand/Apply/Analyze. 
+        But Evaluate and Create—the highest cognitive levels—have zero representation. 
+        This is not accidental; it's a gap in benchmark design.
+      </div>
+
+      <h3 style="margin-top: 14px;">What This Imbalance Means</h3>
+      <p>
+        A model can score excellently on all 43 tasks and still never demonstrate ability to:
+      </p>
+      <ul>
+        <li>Judge the merits of competing approaches (Evaluate)</li>
+        <li>Generate novel solutions or designs (Create)</li>
+        <li>Make coherent trade-off decisions (Evaluate)</li>
+      </ul>
+      <p>
+        The paper argues that until benchmarks include balanced coverage across all Bloom levels, 
+        we cannot claim to be measuring "general LLM capability." We're measuring "capability in a narrow band of cognitive tasks."
+      </p>
+    </section>
+
+    <section class="card">
+      <h2>Deep Dive: The Knowledge Dimensions and Why They're Tricky</h2>
+
+      <p>
+        The paper uses a second classification axis that gets less attention but is equally important: 
+        the <strong>type of knowledge</strong> being tested. A task's Bloom level (Remember, Understand, etc.) 
+        and its knowledge type work together to define what's really being asked.
+      </p>
+
+      <h3 style="margin-top: 14px;">Why Knowledge Type Matters</h3>
+      <p>
+        Consider two tasks at the Understand level:
+      </p>
+      <ul>
+        <li>
+          <strong>Factual/Understand:</strong> "What is the definition of photosynthesis?" 
+          (You must recall a definition and potentially rephrase it. Models with the definition in training tend to do well.)
+        </li>
+        <li>
+          <strong>Procedural/Understand:</strong> "Explain the steps for debugging a Python function." 
+          (You must recall a procedure and explain it coherently. This is harder—it requires both retrieval and sequencing.)
+        </li>
+      </ul>
+      <p>
+        Both are Understand level, but the procedural task is measurably harder for many models. 
+        This is why knowing both dimensions matters—a Bloom level alone doesn't tell the full story.
+      </p>
+
+      <h3 style="margin-top: 14px;">How to Recognize Each Knowledge Type</h3>
+
+      <p><strong>Factual Knowledge:</strong></p>
+      <ul>
+        <li>Standalone facts, definitions, terminology, specific dates, names, categories.</li>
+        <li>Examples: "When was X invented?" "Define paradigm." "What is the capital of France?"</li>
+        <li>Recognition clue: The task is asking "What is this?" or "When did this happen?" or "Recall this specific item."</li>
+        <li>Models handle this well <em>if the fact appears in training data</em>. If it's obscure, performance drops.</li>
+      </ul>
+
+      <p><strong>Conceptual Knowledge:</strong></p>
+      <ul>
+        <li>Categories, principles, relationships, generalizations, cause-effect chains, systems.</li>
+        <li>Examples: "How do democracy and authoritarianism differ?" "Explain the relationship between price and demand." 
+          "What are the main causes of climate change?"</li>
+        <li>Recognition clue: The task asks about relationships, systems, or broader frameworks. 
+          It's not just a single fact but a web of connected ideas.</li>
+        <li>Models often struggle more with conceptual tasks that require distinguishing ideas and explaining nuance. 
+          They can sound right while missing distinctions.</li>
+      </ul>
+
+      <p><strong>Procedural Knowledge:</strong></p>
+      <ul>
+        <li>Techniques, methods, algorithms, step-by-step processes, "how-to" knowledge.</li>
+        <li>Examples: "How would you debug this Python code?" "What are the steps to solve a quadratic equation?" 
+          "Describe the process for conducting a literature review."</li>
+        <li>Recognition clue: The task asks "How do you do this?" or "What are the steps?" 
+          It requires sequencing and the logic connecting steps.</li>
+        <li>Interestingly, the paper found procedural knowledge is often harder for models than conceptual. 
+          Maintaining logical order and justifying each step is cognitively demanding for LLMs.</li>
+      </ul>
+
+      <p><strong>Metacognitive Knowledge:</strong></p>
+      <ul>
+        <li>Awareness about your own knowledge and thinking: what you know well, what gaps you have, how confident you are, 
+          why you used a strategy, what you'd do differently next time.</li>
+        <li>Examples: "What are you most uncertain about in this explanation?" "How confident are you and why?" 
+          "Describe your reasoning process."</li>
+        <li>Recognition clue: The task explicitly asks you to <em>reflect on your own thinking</em>, not just answer a question. 
+          It's meta—about cognition, not the task itself.</li>
+        <li>This is almost never tested in current benchmarks. The paper found zero benchmark tasks classified as metacognitive. 
+          Models also seem unprepared for it—they don't naturally introspect or express epistemic uncertainty well.</li>
+      </ul>
+
+      <h3 style="margin-top: 14px;">The Agreement Problem the Paper Found</h3>
+      <p>
+        The authors had human annotators, LLMs (GPT-4, Claude, Llama), and a fine-tuned classifier label tasks 
+        by both cognitive level and knowledge type. Here's what they found:
+      </p>
+      <ul>
+        <li>
+          <strong>Cognitive level agreement was fairly good:</strong> Humans and LLMs agreed on Bloom levels 
+          (especially when the task was clearly at one level). Inter-rater agreement was around 0.63 (on a weighted kappa scale).
+        </li>
+        <li>
+          <strong>Knowledge type agreement was much weaker:</strong> For knowledge dimensions, agreement dropped to about 0.30. 
+          Humans and LLMs often disagreed on whether a task was Factual vs. Conceptual, or Procedural vs. Conceptual.
+        </li>
+        <li>
+          <strong>Implication:</strong> Knowledge dimensions are genuinely ambiguous (a task can reasonably be classified multiple ways), 
+          or the models haven't learned to make these distinctions reliably. Either way, it's a signal that this dimension needs more attention 
+          and clearer operational definitions.
+        </li>
+      </ul>
+
+      <h3 style="margin-top: 14px;">Knowledge Type Distribution in Benchmarks</h3>
+      <ul>
+        <li><strong>Factual:</strong> 9 tasks (21%)</li>
+        <li><strong>Conceptual:</strong> 20 tasks (47%) — the most common</li>
+        <li><strong>Procedural:</strong> 14 tasks (33%)</li>
+        <li><strong>Metacognitive:</strong> 0 tasks (0%) — absent entirely</li>
+      </ul>
+      <p>
+        Conceptual knowledge dominates, which reflects benchmark designers' focus on understanding and reasoning 
+        over pure fact recall or how-to procedures. But the zero metacognitive coverage is notable—tests of self-awareness 
+        and confidence calibration are nowhere to be found.
+      </p>
+    </section>
+        <ul>
+          <li>Performance is typically stronger on lower Bloom levels.</li>
+          <li>Performance tends to drop as tasks require deeper reasoning (Analyze and above).</li>
+          <li>Aggregated benchmark scores can hide major variation between subtasks.</li>
+          <li>A model can look excellent overall while failing on specific cognitively harder tasks.</li>
+        </ul>
+    <section class="grid">
+      <article class="card">
+        <h2>What They Found About Model Performance</h2>
+        <p>
+          The authors tested three major models (GPT-4, Llama 3, Claude 3) on their curated task set 
+          and looked at performance broken down by Bloom level. The picture was stark:
+        </p>
+        <ul>
+          <li>
+            <strong>Performance drops significantly as cognitive complexity increases.</strong> 
+            Models score highest on Remember and Understand tasks, noticeably lower on Apply and Analyze, 
+            and (where available) lower still on higher levels.
+          </li>
+          <li>
+            <strong>GPT-4 is the strongest but shows the same pattern.</strong> 
+            It scores ~99% on Remember, ~89% on Understand, ~93% on Apply, but ~76% on Analyze. 
+            Even the best model shows a notable cliff at higher levels.
+          </li>
+          <li>
+            <strong>Aggregated scores mask this completely.</strong> 
+            If you report "GPT-4 scores 87% on BIG-Bench Hard," you're hiding the fact that some subtasks 
+            are trivial for it and others are genuinely hard. Average gives false confidence.
+          </li>
+          <li>
+            <strong>Smaller models struggle even more.</strong> 
+            Models like Bloomz (3B) and Falcon (7B) show steep drops starting from Apply level, 
+            with performance sometimes under 50% at Analyze tasks.
+          </li>
+          <li>
+            <strong>The knowledge dimension patterns are interesting:</strong> 
+            Most models perform better on Conceptual tasks than on Procedural or Factual, 
+            contrary to what one might expect. This suggests models have learned general reasoning over rote memorization, 
+            which is good, but procedural knowledge (step-by-step, sequential logic) remains a genuine weak point.
+          </li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <h2>What's Really Happening: The Training Explanation</h2>
+        <p>
+          Why do models perform better at lower Bloom levels? The paper theorizes it's baked into training:
+        </p>
+        <ul>
+          <li>
+            <strong>Next-token prediction (the base training objective) is fundamentally low-level cognition.</strong> 
+            You're predicting the next word given context—this is closer to Remember/Understand than Analyze/Evaluate/Create.
+          </li>
+          <li>
+            <strong>Fine-tuning and reinforcement learning (RLHF) improve things somewhat,</strong> 
+            but they don't fundamentally retrain the base model to excel at higher-order reasoning. 
+            They're refinements, not overhauls.
+          </li>
+          <li>
+            <strong>As a result, models inherit a cognitive profile aligned with their training.</strong> 
+            They're optimized for predicting plausible continuations (Remember), 
+            understanding context (Understand), applying patterns they've seen (Apply). 
+            But genuinely novel reasoning (Analyze+) requires capabilities that aren't directly rewarded during pretraining.
+          </li>
+        </ul>
+      </article>
+    </section>
+
+    <section class="card">
+      <h2>Why This Is Relevant To LLM Evaluation (Very Directly)</h2>
+      <p>
+        The implications of this research go beyond academic interest. Here's how it directly affects how you should think 
+        about model evaluation and selection:
+      </p>
+      <ol>
+        <li>
+          <strong>It changes how we interpret "good benchmark scores".</strong> 
+          If your model scores 90% on MMLU, it doesn't mean it's 90% capable at "understanding." 
+          It means it's 90% capable at the subset of cognitive skills MMLU tests, which skews toward Understand/Apply. 
+          You're not getting a balanced picture.
+        </li>
+        <li>
+          <strong>It gives a structured way to diagnose capability gaps, not just rank models.</strong> 
+          Instead of asking "Is Model A better than Model B?" you can ask "Where does Model A excel and where does it struggle 
+          cognitively?" This is much more actionable for product decisions and debugging.
+        </li>
+        <li>
+          <strong>It helps you design balanced benchmark suites instead of convenience suites.</strong> 
+          Most benchmarks grow organically and happen to emphasize what's easy to measure. 
+          Mapping to Bloom reveals these biases and lets you intentionally fill gaps.
+        </li>
+        <li>
+          <strong>It makes evaluation reports more credible and actionable.</strong> 
+          When you report "GPT-4 achieves 76% on Analyze-level tasks," stakeholders get a realistic expectation. 
+          When you report only aggregate scores, you invite overconfidence.
+        </li>
+        <li>
+          <strong>It highlights risks in model deployment.</strong> 
+          If you're deploying an LLM for tasks that require Evaluate or Create, and your evaluation suite has zero such tasks, 
+          you've built a blind spot into your system.
+        </li>
+      </ol>
+    </section>
+
+    <section class="card">
+      <h2>Practical Recommendations You Can Use Immediately</h2>
+      <p>
+        If you're responsible for LLM evaluation or selection, here are concrete steps to apply this research:
+      </p>
+      <ol>
+        <li>
+          <strong>Report benchmark results by cognitive category, not only by benchmark name.</strong> 
+          For each major benchmark, break down scores by Bloom level. Yes, it's more work to report, 
+          but the granularity is worth it. A single "BIG-Bench Hard score" is almost useless without subtask breakdowns.
+        </li>
+        <li>
+          <strong>Always publish subtask-level scores when benchmarks are heterogeneous.</strong> 
+          MMLU, BIG-Bench Hard, and AGIEval all have vastly different subtasks with different cognitive demands. 
+          Averaging across them creates a false consensus. Break them down.
+        </li>
+        <li>
+          <strong>Intentionally add Evaluate and Create coverage to your evaluation stack before claiming broad capability.</strong> 
+          If your benchmark suite has zero tasks at these levels, you cannot claim to be measuring "general LLM capability." 
+          Add a few tasks that require judgment and generation. (Hint: This is harder to score, but it's worth it.)
+        </li>
+        <li>
+          <strong>Include at least one metacognitive-style test.</strong> 
+          Ask your model to predict its own performance, or to express confidence with calibration. 
+          These are rare in benchmarks but increasingly important for deployed systems that need to know when to defer to humans.
+        </li>
+        <li>
+          <strong>Treat "overall score" as a summary, never as the full story.</strong> 
+          Always publish a breakdown. A model that scores 85% overall but only 50% on Analyze is very different 
+          from a model that scores 85% uniformly across levels.
+        </li>
+        <li>
+          <strong>When comparing models, compare across cognitive levels, not just on total score.</strong> 
+          Model A might be better at Remember/Understand, while Model B is better at Analyze/Evaluate. 
+          Your choice should depend on what your use case needs.
+        </li>
+      </ol>
+    </section>
+
+    <section class="card">
+      <h2>If You Need Prompt Wording (For Your Pipeline)</h2>
+      <p>
+        Ask explicitly for a clear explanation of Bloom’s taxonomy <strong>and</strong> why that taxonomy matters for LLM evaluation.
+        In practice, this improves answer quality and keeps the output focused on evaluation design rather than generic pedagogy.
+      </p>
+      <div class="note">
+        Suggested phrasing:
+        “Provide a clear explanation of Bloom’s taxonomy and explain its relevance to evaluating LLM capabilities, benchmark coverage,
+        and interpretation of model performance. Include concrete examples of tasks at each cognitive level and explain how different 
+        types of knowledge (Factual, Conceptual, Procedural, Metacognitive) interact with these levels."
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Limitations To Keep In Mind</h2>
+      <p>
+        This research is powerful, but it has boundaries. Understanding them helps you apply the framework responsibly:
+      </p>
+      <ul>
+        <li>
+          <strong>Bloom was designed for education, not LLM evaluation.</strong> 
+          When educators designed this taxonomy, they were thinking about students and learning objectives. 
+          LLM tasks are different—there's no learning process, no metacognition in the human sense. 
+          The framework is a useful lens, but it's not a perfect fit.
+        </li>
+        <li>
+          <strong>Task difficulty and input length can confound the cognitive-level interpretation.</strong> 
+          A task that should be "Remember" level can become "Analyze" level if the input is so long that the model 
+          struggles to locate the relevant sentence. Context length is a confounding factor. So is task presentation and wording.
+        </li>
+        <li>
+          <strong>Knowledge-dimension labeling had much weaker inter-rater agreement.</strong> 
+          The authors found that humans and LLMs agreed on Bloom levels ~63% of the time, 
+          but only ~30% of the time on knowledge dimensions. This suggests the knowledge dimension is either genuinely ambiguous 
+          or that the definitions need refinement. Don't over-rely on knowledge-type classifications.
+        </li>
+        <li>
+          <strong>Evaluate and Create are hard to score reliably.</strong> 
+          These levels require subjective judgment. Two annotators might reasonably disagree on whether a generated output is "creative" 
+          or whether an evaluation is well-justified. This doesn't invalidate the framework, but it means you'll need clear rubrics 
+          if you add these levels to your benchmarks.
+        </li>
+        <li>
+          <strong>The paper tested a specific subset of benchmarks.</strong> 
+          Their analysis covers 43 tasks from commonly cited benchmarks. Your evaluation suite might have different distributions. 
+          The overall finding (under-coverage of Evaluate/Create) is likely to generalize, but the specific numbers might not.
+        </li>
+      </ul>
+    </section>
+
+    <p class="footer">
+      Generated from: resources/chunks_for_RAG/llms_bloom_rag.json and resources/chunks_for_RAG/llms_bloom_rag.md
+    </p>
+  </main>
+</body>
+</html>

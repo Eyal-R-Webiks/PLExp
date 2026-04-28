@@ -40,6 +40,13 @@ data_prep/knesset/scripts/**/*.json
 data_prep/knesset/*.csv
 data_prep/archive/
 
+# ── Oversized source shards in new structure (GitHub push limit) ──────────────
+data_prep/original_data_sets/knesset/committee_no_morph_sentences_shards_bzip2_files/protocols_sentences/committee_no_morph_sentences_shards_bzip2_files/no_morph_committee_full_sentences_shard_00.jsonl
+data_prep/original_data_sets/knesset/committee_no_morph_sentences_shards_bzip2_files/protocols_sentences/committee_no_morph_sentences_shards_bzip2_files/no_morph_committee_full_sentences_shard_72.jsonl
+
+# ── Full source datasets (very large; keep local, not in git) ─────────────────
+data_prep/original_data_sets/
+
 # ── Copilot session archive (local working notes, not part of the project) ─────
 pilot/copilot_session_archive/
 
