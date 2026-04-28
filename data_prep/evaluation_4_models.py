@@ -1,15 +1,13 @@
 #!/usr/bin/env python3
-"""Run OpenRouter question evaluation from JSON/JSONL inputs with checkpoints."""
+"""Run OpenRouter evaluation for a single JSON/JSONL question file."""
 
 from __future__ import annotations
 
 import argparse
-import copy
 import json
 import os
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, List, Tuple
 
@@ -24,38 +22,24 @@ DEFAULT_MODELS = (
 )
 
 OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
+REQUIRED_OUTPUT_FIELDS = ("complexity_score", "linguistic_score")
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description=(
-            "Run OpenRouter evaluation for question JSON/JSONL files "
-            "(single file or folder), with checkpointing and resume support."
-        )
+        description="Run OpenRouter question evaluation for one JSON/JSONL input file."
     )
     parser.add_argument(
         "--input-json",
         type=Path,
         default=Path("data_prep/questions/eval/all_questions_for_eval.jsonl"),
-        help="Path to a questions JSON array or JSONL file (single-file mode).",
-    )
-    parser.add_argument(
-        "--input-json-dir",
-        type=Path,
-        default=None,
-        help="Directory of questions JSON/JSONL files (batch mode).",
-    )
-    parser.add_argument(
-        "--input-glob",
-        type=str,
-        default="*.jsonl",
-        help="Glob pattern used with --input-json-dir (default: *.jsonl).",
+        help="Path to a questions JSON array or JSONL file.",
     )
     parser.add_argument(
         "--prompt-file",
         type=Path,
         default=Path("data_prep/prompts/03_question_assessment.md"),
-        help="Prompt file passed as system message to evaluator models.",
+        help="Prompt file passed as system message.",
     )
     parser.add_argument(
         "--output-folder",
@@ -66,23 +50,14 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--output-json",
         type=Path,
-        default=Path("data_prep/questions/full_docs/input_for_eval_scored.json"),
-        help=(
-            "Consolidated JSON output with one record per (row, evaluator model). "
-            "Used in single-file mode."
-        ),
+        default=Path("data_prep/questions/eval/all_questions_for_eval_scored.json"),
+        help="Consolidated JSON output with one row per (input row, evaluator model).",
     )
     parser.add_argument(
         "--models",
         type=str,
         default=DEFAULT_MODELS,
         help="Model mapping string in label=model_id;label=model_id format.",
-    )
-    parser.add_argument(
-        "--required-output-fields",
-        type=str,
-        default="complexity_score,linguistic_score",
-        help="Comma-separated evaluator output fields.",
     )
     parser.add_argument(
         "--max-workers",
@@ -93,7 +68,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--max-output-tokens",
         type=int,
-        default=1000,
+        default=1200,
         help="Max output tokens per model response.",
     )
     parser.add_argument(
@@ -118,22 +93,6 @@ def parse_args() -> argparse.Namespace:
         "--no-resume-existing",
         action="store_true",
         help="Disable per-model resume mode.",
-    )
-    parser.add_argument(
-        "--checkpoint-file",
-        type=Path,
-        default=Path("data_prep/questions/eval_output/output/.eval_batch_checkpoint.json"),
-        help="Checkpoint file used in batch mode.",
-    )
-    parser.add_argument(
-        "--rerun-completed",
-        action="store_true",
-        help="Re-run files already marked successful in checkpoint.",
-    )
-    parser.add_argument(
-        "--stop-on-error",
-        action="store_true",
-        help="Stop batch execution on first file error (default: continue and checkpoint).",
     )
     return parser.parse_args()
 
@@ -160,10 +119,6 @@ def parse_model_map(models_arg: str) -> Dict[str, str]:
         if label and model_id:
             model_map[label] = model_id
     return model_map
-
-
-def parse_model_labels(models_arg: str) -> List[str]:
-    return list(parse_model_map(models_arg).keys())
 
 
 def read_prompt(prompt_path: Path) -> str:
@@ -193,26 +148,28 @@ def load_question_rows(input_json: Path) -> List[Dict[str, str]]:
     for row in source_rows:
         if not isinstance(row, dict):
             continue
-        normalized = dict(row)
-        normalized.setdefault("uuid", str(row.get("uuid") or row.get("UUID") or ""))
-        normalized.setdefault(
-            "extracted_text",
-            str(row.get("extracted_text") or row.get("text") or row.get("excerpt") or ""),
+        rows.append(
+            {
+                "uuid": str(row.get("uuid") or row.get("UUID") or ""),
+                "excerpt": str(
+                    row.get("excerpt")
+                    or row.get("extracted_text")
+                    or row.get("text")
+                    or ""
+                ),
+                "question": str(row.get("question") or ""),
+            }
         )
-        normalized.setdefault("question", str(row.get("question") or ""))
-        rows.append(normalized)
     return rows
 
 
 def build_eval_user_message(row: Dict[str, str]) -> str:
-    extracted_text = str(row.get("extracted_text", "") or "")[:120]
-    question = str(row.get("question", "") or "")[:120]
-    uuid = str(row.get("uuid") or row.get("UUID") or "")
-    return (
-        f"uuid: {uuid}\\n"
-        f"text: {extracted_text}\\n"
-        f"question: {question}\\n"
-    )
+    payload = {
+        "uuid": str(row.get("uuid") or ""),
+        "excerpt": str(row.get("excerpt") or ""),
+        "question": str(row.get("question") or ""),
+    }
+    return json.dumps(payload, ensure_ascii=False)
 
 
 def parse_single_eval_json(response_text: str) -> Tuple[Dict[str, str], str]:
@@ -260,7 +217,7 @@ def parse_single_eval_json(response_text: str) -> Tuple[Dict[str, str], str]:
 
     out: Dict[str, str] = {}
     for field in ["uuid", "excerpt", "question"]:
-        if field in parsed_obj and parsed_obj[field] is not None:
+        if parsed_obj.get(field) is not None:
             out[field] = str(parsed_obj[field])
 
     if "complexity_score" in parsed_obj:
@@ -295,6 +252,24 @@ def parse_single_eval_json(response_text: str) -> Tuple[Dict[str, str], str]:
 
     out["reasoning"] = str(parsed_obj.get("reasoning", "") or "").strip()
     return out, ""
+
+
+def _extract_content_from_choice(choice: Dict[str, object]) -> str:
+    message = (choice.get("message") or {}) if isinstance(choice, dict) else {}
+    content = message.get("content", "") if isinstance(message, dict) else ""
+
+    if isinstance(content, list):
+        chunks: List[str] = []
+        for item in content:
+            if isinstance(item, dict):
+                text_val = item.get("text")
+                if text_val is not None:
+                    chunks.append(str(text_val))
+            elif isinstance(item, str):
+                chunks.append(item)
+        return "".join(chunks)
+
+    return str(content or "")
 
 
 def call_openrouter_eval(
@@ -337,20 +312,33 @@ def call_openrouter_eval(
                 json=payload,
                 timeout=timeout_seconds,
             )
+
             if response.status_code != 200:
-                last_error = f"HTTP {response.status_code}: {response.text[:300]}"
+                last_error = f"HTTP {response.status_code}: {response.text[:500]}"
             else:
-                data = response.json()
-                choices = data.get("choices", [])
-                content = ""
-                if choices:
-                    content = (choices[0].get("message", {}) or {}).get("content", "")
-                if not content:
-                    last_error = "Empty response content"
+                try:
+                    data = response.json()
+                except json.JSONDecodeError as exc:
+                    last_error = f"Non-JSON OpenRouter response: {exc}; raw={response.text[:500]}"
+                    data = {}
+
+                choices = data.get("choices", []) if isinstance(data, dict) else []
+                first_choice = choices[0] if choices else {}
+                finish_reason = ""
+                if isinstance(first_choice, dict):
+                    finish_reason = str(first_choice.get("finish_reason") or "")
+
+                content = _extract_content_from_choice(first_choice if isinstance(first_choice, dict) else {})
+                if not content.strip():
+                    suffix = f"; finish_reason={finish_reason}" if finish_reason else ""
+                    last_error = f"Empty response content{suffix}"
                 else:
                     parsed, parse_error = parse_single_eval_json(content)
                     if parse_error:
-                        last_error = f"Invalid JSON output: {parse_error}"
+                        suffix = f"; finish_reason={finish_reason}" if finish_reason else ""
+                        last_error = (
+                            f"Invalid JSON output: {parse_error}{suffix}; raw_content={content[:500]}"
+                        )
                     else:
                         return parsed, ""
         except Exception as exc:  # noqa: BLE001
@@ -376,6 +364,15 @@ def _worker_eval(args: Tuple) -> Tuple[int, Dict[str, str], str]:
     return idx, parsed, err
 
 
+def _format_eta_hms(total_seconds: int) -> str:
+    if total_seconds < 0:
+        return "--:--:--"
+    hours = total_seconds // 3600
+    minutes = (total_seconds % 3600) // 60
+    seconds = total_seconds % 60
+    return f"{hours:02d}:{minutes:02d}:{seconds:02d}"
+
+
 def _model_progress_line(completed: int, total: int, start_time: float) -> str:
     if total <= 0:
         return "  evaluating 0/0"
@@ -386,34 +383,19 @@ def _model_progress_line(completed: int, total: int, start_time: float) -> str:
     elapsed = max(time.time() - start_time, 1e-6)
     speed = completed / elapsed if completed else 0.0
     eta = int((total - completed) / speed) if speed > 0 else -1
-    eta_text = f"{eta}s" if eta >= 0 else "--"
+    eta_text = _format_eta_hms(eta)
     return f"  evaluating [{bar}] {completed}/{total} ({ratio * 100:5.1f}%) ETA {eta_text}"
 
 
-def _batch_progress_line(completed: int, total: int, start_ts: float) -> str:
-    if total <= 0:
-        return "batch 0/0"
-    ratio = min(max(completed / total, 0.0), 1.0)
-    width = 28
-    filled = int(width * ratio)
-    bar = "#" * filled + "-" * (width - filled)
-    elapsed = max(time.time() - start_ts, 1e-6)
-    speed = completed / elapsed if completed else 0.0
-    eta = int((total - completed) / speed) if speed > 0 else -1
-    eta_text = f"{eta}s" if eta >= 0 else "--"
-    return f"batch [{bar}] {completed}/{total} ({ratio * 100:5.1f}%) ETA {eta_text}"
-
-
-def row_needs_evaluation(row: Dict[str, str], required_output_fields: List[str]) -> bool:
+def row_needs_evaluation(row: Dict[str, str]) -> bool:
     if (row.get("evaluation_error") or "").strip():
         return True
-    return any(not (row.get(field) or "").strip() for field in required_output_fields)
+    return any(not (row.get(field) or "").strip() for field in REQUIRED_OUTPUT_FIELDS)
 
 
 def load_resume_rows_jsonl(
     output_path: Path,
     input_rows: List[Dict[str, str]],
-    required_output_fields: List[str],
 ) -> Tuple[List[Dict[str, str]], List[int]]:
     if not output_path.exists():
         return [dict(row) for row in input_rows], list(range(len(input_rows)))
@@ -432,9 +414,7 @@ def load_resume_rows_jsonl(
         )
         return [dict(row) for row in input_rows], list(range(len(input_rows)))
 
-    pending_indices = [
-        i for i, row in enumerate(existing_rows) if row_needs_evaluation(row, required_output_fields)
-    ]
+    pending_indices = [i for i, row in enumerate(existing_rows) if row_needs_evaluation(row)]
     print(
         f"[RESUME] {output_path.name}: reusing {len(existing_rows) - len(pending_indices)} completed rows, "
         f"retrying {len(pending_indices)} rows"
@@ -449,12 +429,23 @@ def write_jsonl(path: Path, rows: List[Dict[str, str]]) -> None:
             f.write(json.dumps(row, ensure_ascii=False) + "\n")
 
 
-def evaluate_rows_for_input(
-    input_path: Path,
-    args: argparse.Namespace,
-) -> int:
-    if not input_path.exists():
-        raise SystemExit(f"Input JSON/JSONL not found: {input_path}")
+def _base_output_row(input_row: Dict[str, str], model_label: str, model_id: str) -> Dict[str, str]:
+    return {
+        "uuid": str(input_row.get("uuid") or ""),
+        "excerpt": str(input_row.get("excerpt") or ""),
+        "question": str(input_row.get("question") or ""),
+        "complexity_score": "",
+        "linguistic_score": "",
+        "reasoning": "",
+        "evaluator_model_name": model_label,
+        "evaluator_model_id": model_id,
+        "evaluation_error": "",
+    }
+
+
+def evaluate_rows_for_input(args: argparse.Namespace) -> int:
+    if not args.input_json.exists():
+        raise SystemExit(f"Input JSON/JSONL not found: {args.input_json}")
     if not args.prompt_file.exists():
         raise SystemExit(f"Prompt file not found: {args.prompt_file}")
 
@@ -462,24 +453,20 @@ def evaluate_rows_for_input(
     if not api_key:
         raise SystemExit("OPENROUTER_API_KEY is not set.")
 
-    rows = load_question_rows(input_path)
+    rows = load_question_rows(args.input_json)
     if not rows:
-        raise SystemExit(f"Input has no rows: {input_path}")
+        raise SystemExit(f"Input has no rows: {args.input_json}")
 
     if args.limit and args.limit > 0:
         rows = rows[: args.limit]
         print(f"[INFO] Using first {len(rows)} rows due to --limit")
-
-    required_output_fields = [f.strip() for f in args.required_output_fields.split(",") if f.strip()]
-    if not required_output_fields:
-        raise SystemExit("--required-output-fields cannot be empty")
 
     model_map = parse_model_map(args.models)
     if not model_map:
         raise SystemExit("No models configured for evaluation")
 
     prompt_text = read_prompt(args.prompt_file)
-    base_name = input_path.stem
+    base_name = args.input_json.stem
 
     for model_label, model_id in model_map.items():
         print(f"\n[MODEL] {model_label} ({model_id})")
@@ -488,9 +475,22 @@ def evaluate_rows_for_input(
         output_path = args.output_folder / f"{base_name}_eval_{model_label}.jsonl"
 
         if not args.no_resume_existing:
-            result_rows, pending_indices = load_resume_rows_jsonl(output_path, rows, required_output_fields)
+            result_rows, pending_indices = load_resume_rows_jsonl(output_path, rows)
+            for i, r in enumerate(result_rows):
+                r.setdefault("evaluator_model_name", model_label)
+                r.setdefault("evaluator_model_id", model_id)
+                if "excerpt" not in r:
+                    r["excerpt"] = str(rows[i].get("excerpt") or "")
+                if "uuid" not in r:
+                    r["uuid"] = str(rows[i].get("uuid") or "")
+                if "question" not in r:
+                    r["question"] = str(rows[i].get("question") or "")
+                r.setdefault("reasoning", "")
+                r.setdefault("evaluation_error", "")
+                for field in REQUIRED_OUTPUT_FIELDS:
+                    r.setdefault(field, "")
         else:
-            result_rows = [dict(r) for r in rows]
+            result_rows = [_base_output_row(r, model_label, model_id) for r in rows]
             pending_indices = list(range(len(rows)))
 
         if not pending_indices:
@@ -518,25 +518,21 @@ def evaluate_rows_for_input(
             futures = {executor.submit(_worker_eval, item): item[0] for item in work_items}
             for future in as_completed(futures):
                 idx, parsed, err = future.result()
-                row = dict(result_rows[idx])
-                row["evaluator_model_name"] = model_label
-                row["evaluator_model_id"] = model_id
 
                 if err:
                     errors += 1
-                    for field in required_output_fields:
-                        row[field] = ""
-                    row["evaluation_error"] = err
+                    row_out = _base_output_row(rows[idx], model_label, model_id)
+                    row_out["evaluation_error"] = err
                 else:
-                    row["uuid"] = parsed.get("uuid", row.get("uuid") or row.get("UUID") or "")
-                    row["excerpt"] = parsed.get("excerpt", row.get("extracted_text", ""))
-                    row["question"] = parsed.get("question", row.get("question", ""))
-                    for field in required_output_fields:
-                        row[field] = parsed.get(field, "")
-                    row["reasoning"] = parsed.get("reasoning", "")
-                    row["evaluation_error"] = ""
+                    row_out = _base_output_row(rows[idx], model_label, model_id)
+                    row_out["uuid"] = parsed.get("uuid", row_out["uuid"])
+                    row_out["excerpt"] = parsed.get("excerpt", row_out["excerpt"])
+                    row_out["question"] = parsed.get("question", row_out["question"])
+                    row_out["complexity_score"] = parsed.get("complexity_score", "")
+                    row_out["linguistic_score"] = parsed.get("linguistic_score", "")
+                    row_out["reasoning"] = parsed.get("reasoning", "")
 
-                result_rows[idx] = row
+                result_rows[idx] = row_out
                 completed += 1
                 print("\r" + _model_progress_line(completed, len(work_items), start_ts), end="", flush=True)
         print()
@@ -557,12 +553,12 @@ def evaluate_rows_for_input(
 
 
 def consolidate_eval_jsonls_to_json(
-    input_path: Path,
+    input_json: Path,
     output_folder: Path,
     model_map: Dict[str, str],
     output_json: Path,
 ) -> int:
-    base_name = input_path.stem
+    base_name = input_json.stem
     rows_out: List[Dict[str, object]] = []
 
     for model_label, model_id in model_map.items():
@@ -575,6 +571,7 @@ def consolidate_eval_jsonls_to_json(
                 line = line.strip()
                 if not line:
                     continue
+
                 row = json.loads(line)
                 raw_complexity = str(row.get("complexity_score", "")).strip()
                 raw_linguistic = str(row.get("linguistic_score", "")).strip()
@@ -584,19 +581,15 @@ def consolidate_eval_jsonls_to_json(
 
                 rows_out.append(
                     {
-                        "UUID": (
-                            row.get("uuid")
-                            or row.get("UUID")
-                            or row.get("file_name")
-                            or row.get("doc_id")
-                            or ""
-                        ).strip(),
-                        "question": row.get("question", ""),
-                        "text": row.get("excerpt", row.get("extracted_text", "")),
-                        "linguistic_score": linguistic_score,
+                        "uuid": str(row.get("uuid") or ""),
+                        "excerpt": str(row.get("excerpt") or ""),
+                        "question": str(row.get("question") or ""),
                         "complexity_score": complexity_score,
-                        "model_evaluating": model_id,
-                        "reasoning": row.get("reasoning", ""),
+                        "linguistic_score": linguistic_score,
+                        "reasoning": str(row.get("reasoning") or ""),
+                        "evaluator_model_name": str(row.get("evaluator_model_name") or model_label),
+                        "evaluator_model_id": str(row.get("evaluator_model_id") or model_id),
+                        "evaluation_error": str(row.get("evaluation_error") or ""),
                     }
                 )
 
@@ -612,147 +605,6 @@ def to_project_relative(path: Path, project_root: Path) -> Path:
         return path
 
 
-def discover_input_jsons(args: argparse.Namespace) -> List[Path]:
-    if args.input_json_dir:
-        if not args.input_json_dir.exists() or not args.input_json_dir.is_dir():
-            raise SystemExit(f"Input JSON directory not found: {args.input_json_dir}")
-        files = sorted(p for p in args.input_json_dir.glob(args.input_glob) if p.is_file())
-        if not files:
-            raise SystemExit(
-                f"No input files found in {args.input_json_dir} using pattern '{args.input_glob}'"
-            )
-        return files
-
-    if not args.input_json.exists():
-        raise SystemExit(f"Input JSON/JSONL not found: {args.input_json}")
-    return [args.input_json]
-
-
-def load_checkpoint(path: Path) -> Dict:
-    if not path.exists():
-        return {"version": 1, "updated_at": "", "files": {}}
-
-    try:
-        data = json.loads(path.read_text(encoding="utf-8"))
-    except json.JSONDecodeError:
-        print(f"[WARN] Invalid checkpoint JSON, starting fresh: {path}")
-        return {"version": 1, "updated_at": "", "files": {}}
-
-    if not isinstance(data, dict):
-        return {"version": 1, "updated_at": "", "files": {}}
-
-    data.setdefault("version", 1)
-    data.setdefault("updated_at", "")
-    data.setdefault("files", {})
-    if not isinstance(data["files"], dict):
-        data["files"] = {}
-    return data
-
-
-def save_checkpoint(path: Path, checkpoint: Dict) -> None:
-    checkpoint["updated_at"] = datetime.now(timezone.utc).isoformat()
-    path.parent.mkdir(parents=True, exist_ok=True)
-    tmp = path.with_suffix(path.suffix + ".tmp")
-    tmp.write_text(json.dumps(checkpoint, ensure_ascii=False, indent=2), encoding="utf-8")
-    tmp.replace(path)
-
-
-def expected_outputs_for_input(input_path: Path, output_folder: Path, model_labels: List[str]) -> List[str]:
-    return [str(output_folder / f"{input_path.stem}_eval_{label}.jsonl") for label in model_labels]
-
-
-def run_batch_evaluation(args: argparse.Namespace, input_files: List[Path]) -> int:
-    checkpoint = load_checkpoint(args.checkpoint_file)
-    model_labels = parse_model_labels(args.models)
-
-    total = len(input_files)
-    completed_count = 0
-    success_count = 0
-    failure_count = 0
-    skipped_count = 0
-    start_ts = time.time()
-
-    print(f"[BATCH] starting evaluation for {total} file(s)")
-
-    for idx, input_path in enumerate(input_files, start=1):
-        key = str(input_path)
-        existing = checkpoint["files"].get(key, {})
-        if (
-            not args.rerun_completed
-            and isinstance(existing, dict)
-            and existing.get("status") == "success"
-        ):
-            skipped_count += 1
-            completed_count += 1
-            print("\r" + _batch_progress_line(completed_count, total, start_ts), end="", flush=True)
-            continue
-
-        file_args = copy.deepcopy(args)
-        file_args.input_json = input_path
-
-        print()
-        print(f"[FILE {idx}/{total}] {input_path}")
-
-        try:
-            rc = evaluate_rows_for_input(input_path, file_args)
-            status = "success" if rc == 0 else "error"
-            if status == "success":
-                success_count += 1
-            else:
-                failure_count += 1
-
-            checkpoint["files"][key] = {
-                "status": status,
-                "return_code": rc,
-                "attempted_at": datetime.now(timezone.utc).isoformat(),
-                "output_files": expected_outputs_for_input(
-                    input_path=input_path,
-                    output_folder=args.output_folder,
-                    model_labels=model_labels,
-                ),
-            }
-            save_checkpoint(args.checkpoint_file, checkpoint)
-
-            if status == "error" and args.stop_on_error:
-                print(f"[ERROR] stopping due to --stop-on-error (rc={rc})")
-                completed_count += 1
-                print("\r" + _batch_progress_line(completed_count, total, start_ts), end="", flush=True)
-                print()
-                return 1
-
-        except Exception as exc:  # noqa: BLE001
-            failure_count += 1
-            checkpoint["files"][key] = {
-                "status": "error",
-                "return_code": -1,
-                "attempted_at": datetime.now(timezone.utc).isoformat(),
-                "error": str(exc),
-                "output_files": expected_outputs_for_input(
-                    input_path=input_path,
-                    output_folder=args.output_folder,
-                    model_labels=model_labels,
-                ),
-            }
-            save_checkpoint(args.checkpoint_file, checkpoint)
-            print(f"[ERROR] {input_path}: {exc}")
-            if args.stop_on_error:
-                completed_count += 1
-                print("\r" + _batch_progress_line(completed_count, total, start_ts), end="", flush=True)
-                print()
-                return 1
-
-        completed_count += 1
-        print("\r" + _batch_progress_line(completed_count, total, start_ts), end="", flush=True)
-
-    print()
-    print(
-        "[BATCH DONE] "
-        f"success={success_count}, failures={failure_count}, skipped={skipped_count}, "
-        f"checkpoint={args.checkpoint_file}"
-    )
-    return 0 if failure_count == 0 else 1
-
-
 def main() -> int:
     args = parse_args()
 
@@ -762,32 +614,21 @@ def main() -> int:
     ensure_openrouter_key(project_root)
 
     args.input_json = to_project_relative(args.input_json, project_root)
-    args.input_json_dir = (
-        to_project_relative(args.input_json_dir, project_root)
-        if args.input_json_dir is not None
-        else None
-    )
     args.prompt_file = to_project_relative(args.prompt_file, project_root)
     args.output_folder = to_project_relative(args.output_folder, project_root)
     args.output_json = to_project_relative(args.output_json, project_root)
-    args.checkpoint_file = to_project_relative(args.checkpoint_file, project_root)
 
-    input_files = discover_input_jsons(args)
-
-    if len(input_files) == 1 and args.input_json_dir is None:
-        rc = evaluate_rows_for_input(input_files[0], args)
-        if rc == 0:
-            model_map = parse_model_map(args.models)
-            written = consolidate_eval_jsonls_to_json(
-                input_path=input_files[0],
-                output_folder=args.output_folder,
-                model_map=model_map,
-                output_json=args.output_json,
-            )
-            print(f"Wrote consolidated JSON {args.output_json} with {written} rows")
-        return rc
-
-    return run_batch_evaluation(args, input_files)
+    rc = evaluate_rows_for_input(args)
+    if rc == 0:
+        model_map = parse_model_map(args.models)
+        written = consolidate_eval_jsonls_to_json(
+            input_json=args.input_json,
+            output_folder=args.output_folder,
+            model_map=model_map,
+            output_json=args.output_json,
+        )
+        print(f"Wrote consolidated JSON {args.output_json} with {written} rows")
+    return rc
 
 
 if __name__ == "__main__":

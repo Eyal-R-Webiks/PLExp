@@ -1,35 +1,60 @@
-# NLP_Abstractive_QA
+# Abstractive_QA
 
-Project for building a Hebrew abstractive QA dataset (1,000 question–answer pairs) for the MAFAT/Dicta evaluation leaderboard.
-The pipeline generates information-seeking Hebrew questions from three native-Hebrew corpora using Gemini 3, produces abstractive answers, and supports human annotation of quality dimensions via Label Studio.
+Hebrew abstractive QA data-preparation workspace.
 
-## Repository Structure
+The repository currently focuses on:
+- generating summaries and questions from source corpora
+- evaluating generated questions with multiple LLM evaluators through OpenRouter
+- storing prompts, sampled documents, generated questions, and evaluation outputs
+
+## Current Repository Layout
 
 ```
 Abstractive_QA/
-├── PRD.md                  # Product Requirements Document
-├── pilot/                  # Completed pilot (scripts, runs, evaluation outputs)
-├── data_prep/              # Corpus data and preparation scripts (large files not versioned)
-└── resources/              # Reference docs, paper PDFs, and RAG info-sheet chunks
+├── PRD.md
+├── README.md
+├── data_prep/
+│   ├── README.md
+│   ├── summarize_knesset_gemini-3.1-pro-preview.py
+│   ├── generate_questions_gemini-3.1-pro-preview.py
+│   ├── evaluation_4_models.py
+│   ├── prompts/
+│   │   ├── 01_knesset_summaries.md
+│   │   ├── 02_question_generation.md
+│   │   └── 03_question_assessment.md
+│   ├── questions/
+│   │   ├── docs_sampled/
+│   │   ├── generation/
+│   │   ├── eval/
+│   │   └── eval_openrouter/
+│   ├── original_data_sets/          # Local large datasets (ignored in git)
+│   └── reports/
+└── resources/
+		├── Bloom_taxonomy/
+		├── MAFAT_requirements_doc.md
+		├── llms_bloom_summary.html
+		└── chunks_for_RAG/
 ```
 
-See each folder's `README.md` for details:
-- [pilot/README.md](pilot/README.md) — setup, pipeline stages, script reference
-- [data_prep/README.md](data_prep/README.md) — corpus descriptions and file formats
+## Important Notes
 
-## Quick Start
+- Large source corpora under `data_prep/original_data_sets/` are intentionally ignored in git.
+- API credentials are loaded from the root `.env` file.
+- Smoke or ad-hoc test outputs should be written under `smoke_tests/`.
 
-```bash
-cd pilot
-python3 -m venv .venv && source .venv/bin/activate
-pip install -r requirements.txt
-# Set API keys in the root-level .env file
-```
+## Main Scripts
 
-## Corpora
+- `data_prep/summarize_knesset_gemini-3.1-pro-preview.py`
+	- builds short summaries from source materials
+- `data_prep/generate_questions_gemini-3.1-pro-preview.py`
+	- generates Hebrew questions from excerpts/summaries
+- `data_prep/evaluation_4_models.py`
+	- evaluates questions with 4 OpenRouter models using the assessment prompt
 
-| Corpus | Source | Size | Status |
-|--------|--------|------|--------|
-| Hebrew Wikipedia | `data_prep/wiki/` | 310 articles | Versioned |
-| Israel HaYom | `data_prep/il-hym/` | ~275K articles | Not versioned (2 GB) |
-| Knesset protocols | `data_prep/knesset/` | 91 shards | Not versioned (4.5 GB) |
+## Evaluation Defaults
+
+The evaluator defaults to:
+- input: `data_prep/questions/eval/all_questions_for_eval.jsonl`
+- system prompt: `data_prep/prompts/03_question_assessment.md`
+- per-model jsonl output: `data_prep/questions/eval_openrouter/`
+- consolidated json output: `data_prep/questions/eval/all_questions_for_eval_scored.json`
